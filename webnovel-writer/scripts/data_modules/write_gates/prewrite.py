@@ -60,7 +60,17 @@ def run_prewrite_gate(project_root: Path, chapter: int) -> dict[str, Any]:
             )
         )
 
-    runtime = load_runtime_sources(project_root, chapter)
+    try:
+        runtime = load_runtime_sources(project_root, chapter)
+    except (ValueError, OSError) as exc:
+        errors.append(issue(
+            "writing_profile_contracts_invalid", message=str(exc),
+            impact="当前市场、正文语言或固定规则包与合同不一致。",
+            repair="恢复有效 WRITING_PROFILE.json，并按该配置刷新章节合同。",
+        ))
+        return gate_report(stage="prewrite", project_root=project_root, chapter=chapter,
+                           phase=snapshot.phase, errors=errors, warnings=warnings,
+                           details={"phase": snapshot.to_dict()})
     contracts = runtime.contracts
     story_contract = {
         "master_setting": contracts.get("master") or {},

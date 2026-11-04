@@ -79,6 +79,21 @@ def _skill_matches(row: Dict[str, str], skill: str) -> bool:
     return skill in _split_multi_value(row.get("适用技能", ""))
 
 
+def market_matches(row: Dict[str, Any], market: str = "domestic") -> bool:
+    """Unmarked legacy CSV rows are domestic; shared rows require human review.
+
+    CSV schema: ``market=domestic|overseas|shared`` and, for shared content,
+    ``human_reviewed=true`` (also accepts 1/yes). Unknown labels fail closed.
+    This boundary must run before skill, genre, or task matching.
+    """
+    if market not in {"domestic", "overseas"}:
+        raise ValueError(f"Unsupported reference market: {market}")
+    row_market = str(row.get("market") or "domestic").strip().lower()
+    if row_market == "shared":
+        return str(row.get("human_reviewed") or "").strip().lower() in {"true", "1", "yes"}
+    return row_market == market
+
+
 def _genre_matches(row: Dict[str, str], genre: Optional[str]) -> bool:
     """Return True if *genre* is None, or matches ``适用题材`` (``全部`` always matches).
 
@@ -367,6 +382,7 @@ def search(
     table: Optional[str] = None,
     genre: Optional[str] = None,
     max_results: int = 5,
+    market: str = "domestic",
 ) -> Dict[str, Any]:
     """
     Run a BM25 keyword search across CSV reference tables.
@@ -402,7 +418,7 @@ def search(
         if not _table_visible_for_search(tbl_name, skill, explicit_table=table is not None):
             continue
         for row in rows:
-            if _skill_matches(row, skill) and _genre_matches(row, genre):
+            if market_matches(row, market) and _skill_matches(row, skill) and _genre_matches(row, genre):
                 candidates.append((tbl_name, row))
 
     if not candidates:
@@ -483,17 +499,34 @@ def main(argv: Optional[List[str]] = None) -> None:
     parser.add_argument("--genre", default=None, help="Filter by 适用题材 column")
     parser.add_argument("--max-results", type=int, default=5, help="Max results (default 5)")
     parser.add_argument("--csv-dir", default=None, help="Override CSV directory path")
+    parser.add_argument("--market", choices=["domestic", "overseas"], default=None)
+    parser.add_argument("--project-root", default=None, help="Load market and genres from WRITING_PROFILE.json")
 
     args = parser.parse_args(argv)
     csv_dir = Path(args.csv_dir) if args.csv_dir else _default_csv_dir()
+
+    market = args.market or "domestic"
+    genre = args.genre
+    if args.project_root:
+        from data_modules.writing_profile import load_writing_profile
+
+        try:
+            profile = load_writing_profile(Path(args.project_root))
+            if args.market and args.market != profile.market:
+                raise ValueError("--market conflicts with the project's writing profile")
+            market = profile.market
+            genre = genre or "|".join([profile.primary_genre, *profile.secondary_genres])
+        except (ValueError, OSError) as exc:
+            parser.exit(2, f"error: {exc}\n")
 
     result = search(
         csv_dir=csv_dir,
         skill=args.skill,
         query=args.query,
         table=args.table,
-        genre=args.genre,
+        genre=genre,
         max_results=args.max_results,
+        market=market,
     )
     print(json.dumps(result, ensure_ascii=False))
 

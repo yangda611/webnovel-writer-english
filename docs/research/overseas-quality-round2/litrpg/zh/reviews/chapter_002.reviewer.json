@@ -1,0 +1,15 @@
+{
+  "chapter": 2,
+  "issues": [],
+  "issues_count": 0,
+  "blocking_count": 0,
+  "has_blocking": false,
+  "dimension_results": [
+    {"dimension": "setting", "conclusion": "pass"},
+    {"dimension": "timeline", "conclusion": "pass"},
+    {"dimension": "continuity", "conclusion": "pass"},
+    {"dimension": "character", "conclusion": "pass"},
+    {"dimension": "logic", "conclusion": "pass"}
+  ],
+  "summary": "0个问题：0个阻断，0个高优"
+}

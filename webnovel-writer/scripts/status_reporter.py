@@ -89,6 +89,8 @@ from collections import defaultdict
 from project_locator import resolve_project_root
 from chapter_paths import extract_chapter_num_from_filename
 from runtime_compat import enable_windows_utf8_stdio
+from data_modules.text_metrics import count_chapter_text
+from data_modules.writing_profile import load_writing_profile
 
 # 导入配置
 try:
@@ -162,6 +164,9 @@ class StatusReporter:
 
         if isinstance(self.state, dict):
             self.state = normalize_state_runtime_sections(self.state)
+            self.state.setdefault("progress", {})["count_unit"] = load_writing_profile(
+                self.project_root, state=self.state
+            ).chapter_unit
 
         return True
 
@@ -345,6 +350,9 @@ class StatusReporter:
             print(f"⚠️  正文目录不存在: {self.chapters_dir}")
             return
 
+        profile = load_writing_profile(self.project_root, state=self.state)
+        self.chapters_data = []
+
         # 支持两种目录结构：
         # 1) 正文/第0001章.md
         # 2) 正文/第1卷/第001章-标题.md
@@ -377,10 +385,7 @@ class StatusReporter:
                 content = f.read()
 
             # 统计字数（去除 Markdown 标记）
-            text = re.sub(r'```[\s\S]*?```', '', content)  # 去除代码块
-            text = re.sub(r'#+ .+', '', text)  # 去除标题
-            text = re.sub(r'---', '', text)  # 去除分隔线
-            word_count = len(text.strip())
+            word_count = count_chapter_text(content, profile.body_language)
 
             # 主导 Strand / 爽点类型（优先从"本章统计"解析）
             dominant_strand = (self._extract_stats_field(content, "主导Strand") or "").lower()
@@ -425,6 +430,7 @@ class StatusReporter:
                 "chapter": chapter_num,
                 "file": chapter_file,
                 "word_count": word_count,
+                "count_unit": profile.chapter_unit,
                 "characters": characters,
                 "dominant": dominant_strand,
                 "cool_point": cool_point_type,
@@ -674,6 +680,7 @@ class StatusReporter:
 
     def analyze_pacing(self) -> List[Dict]:
         """分析爽点节奏分布（每 N 章为一段）"""
+        profile = load_writing_profile(self.project_root, state=self.state)
         segment_size = self.config.pacing_segment_size
         segments = []
 
@@ -704,7 +711,7 @@ class StatusReporter:
             if cool_points > 0:
                 words_per_point = total_words / cool_points
 
-            rating = self._get_pacing_rating(words_per_point)
+            rating = self._get_pacing_rating(words_per_point) if profile.market == "domestic" else "未设题材基准"
             missing_chapters = len(segment_chapters) - chapters_with_data
             dominant_source = "none"
             if source_counter:
@@ -714,6 +721,7 @@ class StatusReporter:
                 "start": start_ch,
                 "end": end_ch,
                 "total_words": total_words,
+                "count_unit": profile.chapter_unit,
                 "cool_points": cool_points,
                 "words_per_point": words_per_point,
                 "rating": rating,
@@ -918,6 +926,9 @@ class StatusReporter:
         current_chapter = progress.get("current_chapter", 0)
         total_words = progress.get("total_words", 0)
         target_words = self.state.get("project_info", {}).get("target_words", 2000000)
+        profile = load_writing_profile(self.project_root, state=self.state)
+        unit = "词" if profile.chapter_unit == "words" else "字"
+        count_name = "词数" if profile.chapter_unit == "words" else "字数"
 
         avg_words = total_words / current_chapter if current_chapter > 0 else 0
         completion = (total_words / target_words * 100) if target_words > 0 else 0
@@ -926,9 +937,9 @@ class StatusReporter:
             "## 📊 基本数据",
             "",
             f"- **总章节数**: {current_chapter} 章",
-            f"- **总字数**: {total_words:,} 字",
-            f"- **平均章节字数**: {avg_words:,.0f} 字",
-            f"- **创作进度**: {completion:.1f}%（目标 {target_words:,} 字）",
+            f"- **总{count_name}**: {total_words:,} {unit}",
+            f"- **平均章节{count_name}**: {avg_words:,.0f} {unit}",
+            f"- **创作进度**: {completion:.1f}%（目标 {target_words:,} {unit}）",
             "",
             "---",
             ""
@@ -1120,6 +1131,13 @@ class StatusReporter:
     def _generate_pacing_section(self) -> List[str]:
         """生成节奏分析章节"""
         segments = self.analyze_pacing()
+        profile = load_writing_profile(self.project_root, state=self.state)
+        if profile.market == "overseas":
+            unit = "词" if profile.chapter_unit == "words" else "字"
+            return ["## 📈 节奏数据", "", "尚未建立经样章验证的题材节奏基准。", ""] + [
+                f"- 第 {segment['start']}-{segment['end']}章：{segment['total_words']:,} {unit}"
+                for segment in segments
+            ] + ["", "---", ""]
 
         lines = [
             "## 📈 爽点节奏分布",

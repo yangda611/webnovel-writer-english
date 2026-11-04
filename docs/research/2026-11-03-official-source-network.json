@@ -1,0 +1,111 @@
+{
+  "checked_on_local_date": "2026-11-03",
+  "environment": "Windows; repository .venv Python 3.12",
+  "records": [
+    {
+      "url": "https://andrewkrowe.wordpress.com/2019/02/26/progression-fantasy-a-new-subgenre-concept/",
+      "requested_at_utc": "2026-11-03T02:49:25.421331+00:00",
+      "client": "Windows Python 3.12 urllib.request; default certificate validation; User-Agent Mozilla/5.0",
+      "status": 200,
+      "final_url": "https://andrewkrowe.wordpress.com/2019/02/26/progression-fantasy-a-new-subgenre-concept/",
+      "title": "Progression Fantasy – A New Subgenre Concept – Andrew Rowe",
+      "bytes_read": 141309,
+      "sha256": "a85e7162328c4416eee40ffeed5fa2e8c1f76f9011e60b0ce34c7d395582fe36",
+      "transport_result": "reachable",
+      "content_scope": "本地读取返回 HTML 并检查标题；可达性记录不代替资料结论或样章质量验证。"
+    },
+    {
+      "url": "https://www.litrpg.com/litrpgblog/2019/10/6/what-is-litrpg",
+      "requested_at_utc": "2026-11-03T02:49:25.422330+00:00",
+      "client": "Windows Python 3.12 urllib.request; default certificate validation; User-Agent Mozilla/5.0",
+      "status": 200,
+      "final_url": "https://www.litrpg.com/litrpgblog/2019/10/6/what-is-litrpg",
+      "title": "LitRPG",
+      "bytes_read": 114646,
+      "sha256": "11b120ec718c4bf9f382ff590bb71a9e3953a0df19388d88d6765ef08222f807",
+      "transport_result": "reachable",
+      "content_scope": "本地读取返回 HTML 并检查标题；可达性记录不代替资料结论或样章质量验证。"
+    },
+    {
+      "url": "https://www.penguin.co.uk/discover/articles/romantasy-guide",
+      "requested_at_utc": "2026-11-03T02:49:25.422330+00:00",
+      "client": "Windows Python 3.12 urllib.request; default certificate validation; User-Agent Mozilla/5.0",
+      "status": 200,
+      "final_url": "https://www.penguin.co.uk/discover/articles/romantasy-guide",
+      "title": "What is Romantasy? A Beginner’s Guide to the Genre",
+      "bytes_read": 300244,
+      "sha256": "f6f710a662162216fc211eee9683e5b661f8297b33306895c0429c09d2431e7a",
+      "transport_result": "reachable",
+      "content_scope": "本地读取返回 HTML 并检查标题；可达性记录不代替资料结论或样章质量验证。"
+    },
+    {
+      "url": "https://sfwa.org/2025/02/25/romantasy-an-old-genre-with-a-new-name/",
+      "requested_at_utc": "2026-11-03T02:49:25.422330+00:00",
+      "client": "Windows Python 3.12 urllib.request; default certificate validation; User-Agent Mozilla/5.0",
+      "status": 200,
+      "final_url": "https://sfwa.org/2025/02/25/romantasy-an-old-genre-with-a-new-name/",
+      "title": "Romantasy: An Old Genre with a New Name - SFWA - The Science Fiction & Fantasy Writers Association",
+      "bytes_read": 471967,
+      "sha256": "020203dadd01251a172e9e699508bc9a342298554a86ae56cd032a1bfed51369",
+      "transport_result": "reachable",
+      "content_scope": "本地读取返回 HTML 并检查标题；可达性记录不代替资料结论或样章质量验证。"
+    },
+    {
+      "url": "https://www.w3.org/International/clreq/",
+      "requested_at_utc": "2026-11-03T02:49:25.449330+00:00",
+      "client": "Windows Python 3.12 urllib.request; default certificate validation; User-Agent Mozilla/5.0",
+      "status": 200,
+      "final_url": "https://www.w3.org/International/clreq/",
+      "title": "Requirements for Chinese Text Layout - 中文排版需求",
+      "bytes_read": 579234,
+      "sha256": "e8c8eb4174162033bbae7c0c5aa986785787647c8e657f967e5d4ba17f998ba5",
+      "transport_result": "reachable",
+      "content_scope": "本地读取返回 HTML 并检查标题；可达性记录不代替资料结论或样章质量验证。"
+    },
+    {
+      "url": "https://language.moe.gov.tw/001/Upload/FILES/SITE_CONTENT/M0001/HAU/h7.htm",
+      "requested_at_utc": "2026-11-03T02:49:25.460836+00:00",
+      "client": "Windows Python 3.12 urllib.request; default certificate validation; User-Agent Mozilla/5.0",
+      "transport_result": "failed",
+      "error_type": "URLError",
+      "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>",
+      "status": null
+    },
+    {
+      "url": "https://cmosshoptalk.com/2022/11/08/is-a-comma-needed-to-introduce-dialogue/",
+      "requested_at_utc": "2026-11-03T02:49:25.470711+00:00",
+      "client": "Windows Python 3.12 urllib.request; default certificate validation; User-Agent Mozilla/5.0",
+      "status": 200,
+      "final_url": "https://cmosshoptalk.com/2022/11/08/is-a-comma-needed-to-introduce-dialogue/",
+      "title": "Is a Comma Needed to Introduce Dialogue? - CMOS Shop Talk",
+      "bytes_read": 112727,
+      "sha256": "e290602d0fb9ea7caf4b03a9344d28c37cd44ff406ade36b7940355281a9962a",
+      "transport_result": "reachable",
+      "content_scope": "本地读取返回 HTML 并检查标题；可达性记录不代替资料结论或样章质量验证。"
+    },
+    {
+      "url": "https://cmosshoptalk.com/2020/08/18/formatting-thoughts-in-fiction/",
+      "requested_at_utc": "2026-11-03T02:49:25.470711+00:00",
+      "client": "Windows Python 3.12 urllib.request; default certificate validation; User-Agent Mozilla/5.0",
+      "status": 200,
+      "final_url": "https://cmosshoptalk.com/2020/08/18/formatting-thoughts-in-fiction/",
+      "title": "Formatting Thoughts in Fiction - CMOS Shop Talk",
+      "bytes_read": 110063,
+      "sha256": "f0ba447fcdbc0851ca5d52316f0c255f83e2f2b48404b455baab7e3794482ffc",
+      "transport_result": "reachable",
+      "content_scope": "本地读取返回 HTML 并检查标题；可达性记录不代替资料结论或样章质量验证。"
+    },
+    {
+      "url": "https://www.rwa.org/proof-of-serious-pursuit",
+      "requested_at_utc": "2026-11-03T02:50:51.857607+00:00",
+      "client": "Windows Python 3.12 urllib.request; default certificate validation; User-Agent Mozilla/5.0",
+      "status": 200,
+      "final_url": "https://www.rwa.org/proof-of-serious-pursuit",
+      "title": "Proof of Serious Pursuit",
+      "bytes_read": 26754,
+      "sha256": "fe535d8c6033fa43e57085a7ee3697abd840ab76dad0be2711a7b9a37cdd89f0",
+      "transport_result": "reachable",
+      "content_scope": "本地读取返回 HTML 并检查标题；可达性记录不代替资料结论或样章质量验证。"
+    }
+  ]
+}

@@ -93,6 +93,15 @@ def _parse_json_value(raw: object, default):
         return default
 
 
+def _measurement_unit(state: dict | None = None) -> str:
+    from data_modules.writing_profile import load_writing_profile
+
+    try:
+        return load_writing_profile(_get_project_root(), state=state).chapter_unit
+    except ValueError as exc:
+        raise HTTPException(status_code=500, detail=f"写作配置无效: {exc}") from exc
+
+
 def _resolve_volume_for_chapter(state: dict, chapter: int) -> int | None:
     progress = state.get("progress") if isinstance(state, dict) else {}
     if not isinstance(progress, dict):
@@ -292,7 +301,9 @@ def create_app(project_root: str | Path | None = None) -> FastAPI:
     @app.get("/api/project/info")
     def project_info():
         """返回 state.json 完整内容（只读）。"""
-        return _load_state_payload(required=True)
+        state = _load_state_payload(required=True)
+        state.setdefault("progress", {})["count_unit"] = _measurement_unit(state)
+        return state
 
     @app.get("/api/story-runtime/health")
     def story_runtime_health():
@@ -393,12 +404,14 @@ def create_app(project_root: str | Path | None = None) -> FastAPI:
 
     @app.get("/api/chapters")
     def list_chapters():
+        unit = _measurement_unit(_load_state_payload())
         with closing(_get_db()) as conn:
             rows = conn.execute("SELECT * FROM chapters ORDER BY chapter ASC").fetchall()
             normalized = []
             for row in rows:
                 item = dict(row)
                 item["characters"] = _parse_json_value(item.get("characters"), [])
+                item["count_unit"] = item.get("count_unit") or unit
                 normalized.append(item)
             return normalized
 
@@ -441,6 +454,7 @@ def create_app(project_root: str | Path | None = None) -> FastAPI:
     @app.get("/api/stats/chapter-trend")
     def chapter_trend(limit: int = Query(50, ge=1, le=500), offset: int = Query(0, ge=0)):
         state = _load_state_payload()
+        unit = _measurement_unit(state)
         strand_map = _build_strand_map(state)
 
         with closing(_get_db()) as conn:
@@ -488,6 +502,7 @@ def create_app(project_root: str | Path | None = None) -> FastAPI:
                     "title": row.get("title") or "",
                     "location": row.get("location") or "",
                     "word_count": int(row.get("word_count") or 0),
+                    "count_unit": unit,
                     "characters": _parse_json_value(row.get("characters"), []),
                     "summary": row.get("summary") or "",
                     "review_score": row.get("review_score"),
@@ -505,6 +520,7 @@ def create_app(project_root: str | Path | None = None) -> FastAPI:
 
         return {
             "items": items,
+            "count_unit": unit,
             "total": int(total_rows[0]["count"] or 0) if total_rows else 0,
             "latest_chapter": int(latest_rows[0]["chapter"] or 0) if latest_rows else 0,
             "limit": limit,

@@ -14,7 +14,7 @@ import {
     formatPercent,
     formatShortNumber,
 } from '../lib/format.js'
-import { groupChaptersByVolume } from '../lib/story.js'
+import { countLabels, groupChaptersByVolume } from '../lib/story.js'
 
 const WINDOW_SIZE = 50
 
@@ -101,7 +101,7 @@ function buildReviewOption(items) {
     }
 }
 
-function buildVolumeOption(groups) {
+function buildVolumeOption(groups, unit) {
     return {
         tooltip: { trigger: 'axis' },
         xAxis: {
@@ -110,6 +110,7 @@ function buildVolumeOption(groups) {
         },
         yAxis: {
             type: 'value',
+            name: unit,
             axisLabel: {
                 formatter: value => `${formatShortNumber(Number(value) / 10000)}万`,
             },
@@ -193,7 +194,7 @@ function RecentSummaryCard({ item }) {
             <p>{item.summary || '暂无章节概要。'}</p>
             <div className="summary-meta">
                 <span>{item.location || '未记录地点'}</span>
-                <span>{formatNumber(item.word_count)} 字</span>
+                <span>{formatNumber(item.word_count)} {countLabels(item).unit}</span>
                 <span>{(item.characters || []).join('、') || '未记录角色'}</span>
             </div>
         </article>
@@ -342,6 +343,7 @@ export default function OverviewPage() {
     }, [projectInfo?.strand_tracker?.history])
 
     const totalWords = Number(progress.total_words || 0)
+    const count = countLabels(projectInfo)
     const targetWords = Number(info.target_words || 0)
     const progressPercent = targetWords > 0 ? (totalWords / targetWords) * 100 : 0
 
@@ -354,9 +356,9 @@ export default function OverviewPage() {
 
             <div className="stat-grid">
                 <StatCard
-                    label="总字数"
+                    label={`总${count.name}`}
                     value={formatNumber(totalWords)}
-                    sub={`目标 ${formatNumber(targetWords || 0)} 字 · ${formatPercent(progressPercent)}`}
+                    sub={`目标 ${formatNumber(targetWords || 0)} ${count.unit} · ${formatPercent(progressPercent)}`}
                     progress={progressPercent}
                 />
                 <StatCard
@@ -419,15 +421,15 @@ export default function OverviewPage() {
                     <div className="card-header">
                         <div>
                             <div className="section-label">WORD DISTRIBUTION</div>
-                            <div className="card-title">字数分布（按卷）</div>
+                            <div className="card-title">{count.name}分布（按卷）</div>
                         </div>
                         <Badge tone="purple">{volumeGroups.length} 卷</Badge>
                     </div>
                     {volumeGroups.length ? (
-                        <ChartWrapper option={buildVolumeOption(volumeGroups)} />
+                        <ChartWrapper option={buildVolumeOption(volumeGroups, count.unit)} />
                     ) : (
                         <div className="empty-state">
-                            <p>暂无章节字数数据</p>
+                            <p>暂无章节{count.name}数据</p>
                         </div>
                     )}
                 </article>

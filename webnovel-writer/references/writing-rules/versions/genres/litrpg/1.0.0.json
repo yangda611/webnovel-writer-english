@@ -1,0 +1,86 @@
+{
+  "id": "litrpg",
+  "version": "1.0.0",
+  "status": "draft",
+  "market": "overseas",
+  "name": "游戏机制叙事（LitRPG）",
+  "reader_promise": "可识别的角色扮演游戏机制参与塑造人物的选择、风险与成长，机制产生的结果对故事有实际意义。",
+  "scope": {
+    "includes": [
+      "游戏世界或具有游戏机制的现实",
+      "属性、技能、职业、经验或资源等会影响情节的规则",
+      "规则内的探索与策略选择"
+    ],
+    "not_required": [
+      "所有章节展示完整面板",
+      "固定的系统播报口吻",
+      "无敌主角",
+      "强制使用某套游戏或修仙术语"
+    ],
+    "boundaries": "依据作者 Aleron Kong 官方站点的宽泛定义建立草案。LitRPG 与 GameLit 的边界存在使用差异，本包不把一种作者定义包装成行业统一标准。",
+    "evidence_status": "机制设计建议为本项目编辑方案；尚未验证读者对面板密度、数值复杂度或平台章长的偏好。"
+  },
+  "init_questions": [
+    "游戏机制为何存在，哪些人能看到界面，谁能修改或误读它？",
+    "哪些属性、技能或资源真正影响选择？成长和失败各如何计算？",
+    "死亡、受伤、重置、复活与惩罚的规则是什么？",
+    "读者能获得哪些规则信息，哪些信息会被有意延后？主角与读者的知识差如何保持公平？",
+    "面板如何展示，术语是否需要中文、英文或双语对照？哪些只是排版选择？"
+  ],
+  "outline_guidance": [
+    "建立最小规则账本：输入、消耗、判定、结果、例外与信息可见性；先解释当前情节实际需要的部分。",
+    "关键解法在使用前给出足够线索，规则变化须有故事内依据。",
+    "让配装、分点、技能组合或协作形成有后果的选择，避免每次选项都有唯一显然正确答案。",
+    "卷级成长与社会、关系或生存问题相互作用；数值增加本身不替代剧情结果。",
+    "混合题材分别承诺，不默认使用国内游戏模板或修仙境界作缺省。"
+  ],
+  "writing_guidance": [
+    "仅在读者需要判断选择或理解后果时展示相关数值；完整角色表可单独维护。",
+    "同一资源在叙述、面板和行动结果中使用一致单位；区分角色推测与已确认系统规则。",
+    "用角色在规则压力下的行动保持场景连续，避免连续播报盖过人物经验。",
+    "根据语言包处理界面标点、术语大小写与复数；管理 JSON 键保持原样，正文名称按项目术语表。"
+  ],
+  "review_focus": {
+    "fact_checks": [
+      "资源增减、等级、技能前置和冷却是否与记录一致",
+      "界面可见性是否造成知识越界",
+      "例外或胜利条件是否与先前规则矛盾"
+    ],
+    "advisory_checks": [
+      "机制是否改变选择",
+      "面板是否打断当前体验",
+      "规则信息是否足够支持读者理解而不淹没故事"
+    ],
+    "advisory_policy": "面板密度、趣味与审美仅提供独立建议；事实阻断仍由既有五维证据决定。"
+  },
+  "examples": [
+    {
+      "language": "zh",
+      "text": "【护盾：4／4】\n【维持：每息消耗 1 点专注】\n米拉没有开盾。门闩还要三息才会松，她只有两点专注。她把仅剩的升级点留在掌心，先问门后的少年：‘你能自己跑吗？’",
+      "commentary": "原创演示：规则支持一个具有取舍的决定；数字格式仅为本项目示例。"
+    },
+    {
+      "language": "en",
+      "text": "Shield: 4/4. Upkeep: 1 Focus per second.\nMira dismissed it. The latch would need three seconds; she had two Focus left. Spending her upgrade point would solve that. It would also leave her brother without a healer.",
+      "commentary": "原创演示：界面只显示与本次决定有关的信息；不规定所有作品必须使用这种面板。"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.litrpg.com/litrpgblog/2019/10/6/what-is-litrpg",
+      "title": "What is LitRPG?",
+      "publisher_or_author": "Aleron Kong 官方站点 LitRPG.com",
+      "accessed_on": "2026-11-03",
+      "read_scope": "实际通过 web 打开正文并在本地 HTTP 读取，核实明确成长和作为故事必要部分的游戏型世界这两项作者定义；该文没有提供 GameLit 的定义。",
+      "limits": "作者站点的定义性文章，非跨平台统一规范；没有读取其付费作品全文。"
+    },
+    {
+      "url": "https://andrewkrowe.wordpress.com/2019/02/26/progression-fantasy-a-new-subgenre-concept/",
+      "title": "Progression Fantasy: A New Subgenre Concept",
+      "publisher_or_author": "Andrew Rowe",
+      "accessed_on": "2026-11-03",
+      "read_scope": "读取 LitRPG 和成长奇幻可能重叠但不等同的讨论。",
+      "limits": "只用于防止自动混同两个类型，不用于证明本包的所有编辑建议。"
+    }
+  ]
+}

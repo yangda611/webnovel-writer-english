@@ -832,8 +832,8 @@ def test_context_manager_composite_genre_boundary_three_plus(temp_project):
 
     profile = manager._load_genre_profile(state)
     assert profile.get("composite") is True
-    assert profile.get("genres") == ["电竞", "直播文", "克苏鲁"]
-    assert profile.get("secondary_genres") == ["直播文", "克苏鲁"]
+    assert profile.get("genres") == ["电竞", "直播文", "克苏鲁", "修仙"]
+    assert profile.get("secondary_genres") == ["直播文", "克苏鲁", "修仙"]
 
     profile_again = manager._load_genre_profile(state)
     assert profile_again.get("genres") == profile.get("genres")

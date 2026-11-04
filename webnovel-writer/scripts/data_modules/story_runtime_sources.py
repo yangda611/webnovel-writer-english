@@ -9,6 +9,7 @@ from typing import Any
 from chapter_outline_loader import volume_num_for_chapter_from_state
 
 from .story_contracts import StoryContractPaths, read_json_if_exists
+from .profile_contracts import contract_profile_errors
 
 
 @dataclass
@@ -62,6 +63,9 @@ def load_runtime_sources(project_root: Path, chapter: int) -> RuntimeSourceSnaps
         "chapter": read_json_if_exists(paths.chapter_json(chapter)) or {},
         "review": read_json_if_exists(paths.review_json(chapter)) or {},
     }
+    errors = contract_profile_errors(project_root, contracts, require_all=False)
+    if errors:
+        raise ValueError("; ".join(errors))
     latest_commit = _load_latest_commit(paths, chapter)
     latest_accepted_commit = _load_latest_accepted_commit(paths, chapter)
 

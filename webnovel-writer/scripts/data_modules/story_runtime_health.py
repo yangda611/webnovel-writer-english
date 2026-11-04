@@ -8,6 +8,8 @@ from pathlib import Path
 from typing import Any
 
 from .story_runtime_sources import load_runtime_sources
+from .profile_contracts import contract_profile_errors
+from .story_contracts import read_json_if_exists
 
 
 _CHAPTER_FILE_RE = re.compile(r"chapter_(\d{3,4})")
@@ -67,20 +69,36 @@ def build_story_runtime_health(project_root: Path, chapter: int | None = None) -
     project_root = Path(project_root)
     current_chapter = _resolve_chapter(project_root, chapter)
     if current_chapter <= 0:
+        try:
+            master = read_json_if_exists(project_root / ".story-system" / "MASTER_SETTING.json") or {}
+            profile_errors = contract_profile_errors(project_root, {"master": master}, require_all=False)
+        except (ValueError, OSError) as exc:
+            profile_errors = [str(exc)]
         return {
             "chapter": 0,
             "mainline_ready": False,
             "fallback_sources": ["chapter_unspecified"],
             "latest_commit_status": "missing",
             "primary_write_source": "chapter_commit",
+            "writing_profile_errors": profile_errors,
         }
 
-    snapshot = load_runtime_sources(project_root, current_chapter)
+    try:
+        snapshot = load_runtime_sources(project_root, current_chapter)
+    except (ValueError, OSError) as exc:
+        return {
+            "chapter": current_chapter, "mainline_ready": False,
+            "fallback_sources": ["invalid_writing_profile_contracts"],
+            "latest_commit_status": "unknown", "primary_write_source": "chapter_commit",
+            "writing_profile_errors": [str(exc)],
+        }
     latest_commit = snapshot.latest_commit or {}
+    profile_errors = contract_profile_errors(project_root, snapshot.contracts)
     return {
         "chapter": current_chapter,
-        "mainline_ready": not snapshot.fallback_sources,
+        "mainline_ready": not snapshot.fallback_sources and not profile_errors,
         "fallback_sources": list(snapshot.fallback_sources),
         "latest_commit_status": (latest_commit.get("meta") or {}).get("status", "missing"),
         "primary_write_source": snapshot.primary_write_source,
+        "writing_profile_errors": profile_errors,
     }

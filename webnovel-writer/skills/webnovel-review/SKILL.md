@@ -32,12 +32,15 @@ export PROJECT_ROOT="$(python "${SCRIPTS_DIR}/webnovel.py" --project-root "${WOR
 
 `PROJECT_ROOT` 必须包含 `.webnovel/state.json`，否则阻断。
 
+先读 `../../references/writing-rules/README.md` 并运行 `python -X utf8 "${SCRIPTS_DIR}/writing_profile.py" --project-root "${PROJECT_ROOT}" --bundles`，验证 `.story-system/WRITING_PROFILE.json`、全部主辅类型、正文语言、固定包版本及合同引用。已确认选择不重问；配置缺损或国外题材 draft 未授权时不得回落国内。
+
 ### Step 2：目标章缺合同时刷新 runtime 合同
 
 目标章缺 runtime 合同时，先用详细大纲的真实本章目标刷新（`CHAPTER_GOAL` 禁止 `{章纲目标}` / `第N章章纲目标` 占位文本）：
 
 ```bash
-GENRE="$(python -X utf8 -c "import json; s=json.load(open('${PROJECT_ROOT}/.webnovel/state.json',encoding='utf-8')); pi=s.get('project_info',{}); print(pi.get('genre') or s.get('project',{}).get('genre',''))")"
+PROFILE_JSON="$(python -X utf8 "${SCRIPTS_DIR}/writing_profile.py" --project-root "${PROJECT_ROOT}" --bundles)" || exit 1
+GENRE="$(python -X utf8 -c "import json,sys; print(json.loads(sys.argv[1])['profile']['primary_genre'])" "${PROFILE_JSON}")"
 
 python -X utf8 "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" \
   story-system "${CHAPTER_GOAL}" --genre "${GENRE}" --chapter {chapter_num} --persist --emit-runtime-contracts --format both
@@ -47,10 +50,11 @@ python -X utf8 "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" \
 
 | Trigger | Reference |
 |---------|-----------|
-| always | `../../references/shared/core-constraints.md` |
+| 国内 | `../../references/shared/core-constraints.md` |
 | always | `../../references/review-schema.md` |
-| 审查涉及爽点或钩子 | `../../references/shared/cool-points-guide.md` |
-| 审查涉及多线交织 | `../../references/shared/strand-weave-pattern.md` |
+| 国内审查涉及爽点或钩子 | `../../references/shared/cool-points-guide.md` |
+| 国内审查涉及多线交织 | `../../references/shared/strand-weave-pattern.md` |
+| 国外 | helper 加载的全部题材包 `review_focus` 和对应正文语言包；不加载国内固定节奏和句长标准 |
 | blocking issue 需用户裁决 (Step 8) | `../../references/review/blocking-override-guidelines.md` |
 
 ### Step 4：加载投影状态与待审正文
@@ -64,6 +68,8 @@ cat "${PROJECT_ROOT}/.webnovel/state.json"
 ### Step 5：调用统一审查 Agent
 
 必须通过 `Agent` 工具调用 `reviewer`。审查方法与维度细则由 reviewer 自带，本 Skill 不展开。
+
+事实 reviewer 的五维职责和 blocking 证据门槛保持不变。题材包的 `fact_checks` 仅作查证线索；`editorial_guidance` 中的主辅题材承诺、跨章账本、场景检查和对照案例可作为独立编辑建议的依据，但未达到建议本身不是事实矛盾。语言、关系化学反应、面板密度、节奏与审美检查由主流程另写 `审查报告/第{chapter_num}章语言建议.md`，标明位置、实际正文证据、理由和可选改写，不进入 reviewer JSON、事实 metrics 或自动阻断。国外不使用国内 Anti-AI 分数/词频结论判定事实审查通过。
 
 ```text
 Use the Agent tool to run `webnovel-writer:reviewer`.

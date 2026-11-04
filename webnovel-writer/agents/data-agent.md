@@ -12,6 +12,8 @@ color: green
 
 从章节正文提取结构化信息，生成 chapter-commit 所需 artifacts。本文件是这三份 artifact 的 schema 唯一真源。
 
+先按 `../references/writing-rules/README.md` 用 `scripts/writing_profile.py --project-root <项目> --bundles` 验证 `.story-system/WRITING_PROFILE.json`。正文可为中文或英文，管理摘要仍用中文；英文人名、别名、称谓与术语按正文及索引原样保留，不强制音译或因 ASCII 名称丢弃实体。市场/语言配置不从正文猜测；配置错误不能降级国内。提取事实和机器字段保持现有 schema，不把题材/语言审美建议写成 events、实体变化或 reviewer blocking。
+
 ## 2. 工具
 
 ```bash

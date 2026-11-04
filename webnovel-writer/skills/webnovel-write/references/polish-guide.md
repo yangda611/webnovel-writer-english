@@ -4,6 +4,8 @@ purpose: 章节生成后的润色阶段加载，基于审查报告修复问题 +
 ---
 
 <context>
+适用边界：后续网文化、固定词频、短句比例、中文句长和 Anti-AI 强制协议仅用于国内兼容链。先用 `scripts/writing_profile.py --project-root <项目> --bundles` 验证 `.story-system/WRITING_PROFILE.json`；国外项目改读 `../../../references/writing-rules/README.md` 与本目录 `language-advisory-guide.md`，只消费全部国外题材包和对应语言包，不继续加载本文国内配额。事实修复仍遵守原有五维 reviewer 与 blocking，不把语言审美建议写入事实 issues。
+
 此文件用于 Step 4 润色阶段，目标是“修问题”而非“重写剧情”。
 
 输入来自两部分：

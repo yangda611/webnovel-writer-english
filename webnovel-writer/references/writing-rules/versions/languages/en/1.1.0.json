@@ -1,0 +1,108 @@
+{
+  "id": "en",
+  "version": "1.1.0",
+  "status": "draft",
+  "market": "shared",
+  "body_language": "en",
+  "name": "英文正文表达包",
+  "reader_promise": "英文正文按英文叙述组织信息，保持视角、时态、人物声音与术语一致；管理交互继续使用中文。",
+  "scope": {
+    "includes": [
+      "英文原创叙事和对白",
+      "时态、POV、叙述距离与引语呈现",
+      "姓名、缩写、复合词和界面术语一致性"
+    ],
+    "not_required": [
+      "中文逐句转译",
+      "中文句长阈值",
+      "固定短句或 said 标签比例",
+      "统一美式或英式规范",
+      "从中文词频推断 AI 文风"
+    ],
+    "boundaries": "本包提供英文表达草案；实际拼写、引号、亲密尺度与平台格式依项目选择。来源中的 Chicago 惯例不是所有出版社唯一标准。",
+    "evidence_status": "已读编辑机构的小说编辑文章；尚无英语母语编辑、目标平台或长篇读者验证。"
+  },
+  "init_questions": [
+    "正文采用哪种英文拼写约定或出版方样式？",
+    "POV 和主要时态是什么，允许哪些有标记的切换？",
+    "对白、直接内心与间接内心如何区分？",
+    "人名发音、称谓、技能和界面术语是否有固定词表？"
+  ],
+  "outline_guidance": [
+    "中文章纲描述事件与约束，起草时按英文场景自然展开；不复制中文信息顺序和省略指代。",
+    "在章纲记录 POV 与时态要求、角色所知范围及场景时间，避免切换后读者无定位。"
+  ],
+  "writing_guidance": [
+    "直接用英文组织场景、对白与内心活动；根据当前 POV 选择角色会注意、知道和命名的细节。",
+    "区分对话标签与动作句，标点跟随实际句法；不要为达成标签比例而用不合语法的动作代替 said。",
+    "时态服务时间关系，闪回或直接思想可有合理变化；不要把每个时态变化都视为错误。",
+    "避免指代歧义、修饰悬挂和无意重复；被动语态、长句与副词按作用判断，不实行全禁。",
+    "术语、称谓、技能名、数值单位及复数保持一致；用段落与信息次序改善阅读，而非按中文字符阈值拆句。"
+  ],
+  "expression_guidance": {
+    "dialogue": "先选择项目引号与拼写样式，再区分说话标签、动作节拍和真正的打断；人物语法可有经过选择的差异。",
+    "thought": "直接思想与自由间接叙述均可，按 POV、距离和项目样式保持可识别性；斜体不是普遍强制项。",
+    "counting": "章长读取 WritingProfile.chapter_length/chapter_unit，英文使用 words；统一计数 helper 处理缩写、连字符、数字与 Markdown，不手算后覆盖。"
+  },
+  "review_focus": {
+    "advisory_checks": [
+      "是否存在未经选择的时态或 POV 漂移",
+      "对白标签与动作句的标点是否清楚",
+      "措辞是否呈现人物声音而非译腔",
+      "术语、拼写样式与称谓是否一致"
+    ],
+    "advisory_policy": "英文表达建议独立输出，不进入五维事实 blocking；人物知识越界等可验证事实另按现有 reviewer 职责判断。"
+  },
+  "examples": [
+    {
+      "language": "en",
+      "text": "Kell set his last copper on the counter. It would buy half a bottle of lamp oil or one dose of painkiller. He pushed it toward the apothecary and picked up the empty lamp. He knew the road home.",
+      "commentary": "原创英文示例：场景中的决定可以用克制的叙述呈现；不作为所有人物和类型的统一文风。"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://cmosshoptalk.com/2022/11/08/is-a-comma-needed-to-introduce-dialogue/",
+      "title": "Is a Comma Needed to Introduce Dialogue?",
+      "publisher_or_author": "CMOS Shop Talk / The Chicago Manual of Style",
+      "accessed_on": "2026-11-03",
+      "read_scope": "实际打开并读取正文，对比说话标签、动作句与对话引入的逗号用法。",
+      "limits": "一篇具体编辑文章，不能替代完整英文编辑或出版方 house style。"
+    },
+    {
+      "url": "https://cmosshoptalk.com/2020/08/18/formatting-thoughts-in-fiction/",
+      "title": "Formatting Thoughts in Fiction",
+      "publisher_or_author": "CMOS Shop Talk / The Chicago Manual of Style",
+      "accessed_on": "2026-11-03",
+      "read_scope": "实际打开并读取正文中的直接/间接思想、斜体、引号和第一/第三人称示例。",
+      "limits": "说明存在多种可行呈现，不据此强制所有英文小说使用斜体或一种 POV。"
+    }
+  ],
+  "revision_notes": {
+    "previous_version": "1.0.0",
+    "evidence_basis": "1.1.0 新增内容是本项目编辑方案，依照已读来源的类型边界设计；不是来源原文、统一行业规则或已验证的读者偏好。连续样章和模型交叉审稿只提供有限案例证据。",
+    "validation_record": "docs/research/overseas-quality-round2/README.md"
+  },
+  "scene_revision_checks": [
+    {
+      "question": "Is each detail available to this POV, and would this person notice it now?",
+      "action": "Move inaccessible interpretation to observable evidence; keep uncertainty where the character cannot know. A verifiable knowledge contradiction goes to the existing fact review."
+    },
+    {
+      "question": "Can a reader follow the action without rereading pronouns or spatial references?",
+      "action": "Identify the ambiguous referent, order perceptions and actions as experienced, and preserve deliberate uncertainty rather than explaining every gesture."
+    },
+    {
+      "question": "Does the voice come from the character's interests and situation?",
+      "action": "Replace generic declarations or repeated aphorisms only when they flatten this scene; retain chosen register, dialect, sentence variety and silence."
+    },
+    {
+      "question": "Does dialogue change the scene, and can it be spoken naturally?",
+      "action": "Check intention, response, punctuation and implied knowledge. Do not enforce said quotas, ban adverbs or convert every tag to an action beat."
+    },
+    {
+      "question": "Does a revision preserve mechanics, agency, names and machine fields?",
+      "action": "Compare with the fact ledger; do not beautify away resource costs, refusal, uncertainty or meaningful limitations."
+    }
+  ]
+}

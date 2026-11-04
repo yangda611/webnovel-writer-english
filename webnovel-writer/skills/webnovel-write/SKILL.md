@@ -9,7 +9,7 @@ argument-hint: "[章号] [--fast|--minimal]"
 
 ## 目标
 
-产出可发布章节到 `正文/第{NNNN}章-{title}.md`。默认 2000-2500 字，用户/大纲另有要求时从之。
+产出章节到 `正文/第{NNNN}章-{title}.md`。章长与单位取 `.story-system/WRITING_PROFILE.json`；中文 characters、英文 words。仅纯旧国内项目沿用默认 2000-2500 字。自动链路完成不等于商业质量或平台已验证。
 
 ## 模式
 
@@ -33,8 +33,10 @@ argument-hint: "[章号] [--fast|--minimal]"
 
 ## CSV 检索（Step 2 按需）
 
+先读 `../../references/writing-rules/README.md` 并用 helper 加载对应版本的全部题材和语言包。国外无适用检索结果时返回空，不自动改成“全部”、shuangwen 或修仙。
+
 ```bash
-python -X utf8 "${SCRIPTS_DIR}/reference_search.py" --skill write --table {表名} --query "{关键词}" --genre {题材}
+python -X utf8 "${SCRIPTS_DIR}/reference_search.py" --project-root "${PROJECT_ROOT}" --skill write --table {表名} --query "{关键词}" --genre "{题材}"
 ```
 
 触发条件：新角色→命名规则，战斗→场景写法，多角色对话→写作技法，情感描写→写作技法，高频桥段→场景写法。
@@ -56,10 +58,11 @@ python -X utf8 "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" pla
 
 ### 准备：刷新合同树
 
-genre 从 `.webnovel/state.json` 的初始化配置快照读取，用于刷新合同树；写前主链真源仍是 `.story-system/` 合同。调用 story-system 前必须先从详细大纲解析真实本章目标，禁止传 `{章纲目标}`、`第N章章纲目标` 等占位 query。
+先用 helper 验证 `.story-system/WRITING_PROFILE.json` 和固定包版本；市场、正文语言、全部主辅类型不从 state 快照重建。配置缺失/损坏且有新配置痕迹、国外题材 draft 未授权、合同指纹不符均停止，不能降级国内。调用 story-system 前必须先从详细大纲解析真实本章目标，禁止传 `{章纲目标}`、`第N章章纲目标` 等占位 query。
 
 ```bash
-GENRE="$(python -X utf8 -c "import json,sys; s=json.load(open('${PROJECT_ROOT}/.webnovel/state.json',encoding='utf-8')); pi=s.get('project_info',{}); print(pi.get('genre') or s.get('project',{}).get('genre',''))")"
+PROFILE_JSON="$(python -X utf8 "${SCRIPTS_DIR}/writing_profile.py" --project-root "${PROJECT_ROOT}" --bundles)" || exit 1
+GENRE="$(python -X utf8 -c "import json,sys; print(json.loads(sys.argv[1])['profile']['primary_genre'])" "${PROFILE_JSON}")"
 
 python -X utf8 "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" \
   story-system "${CHAPTER_GOAL}" --genre "${GENRE}" --chapter {chapter_num} --persist --emit-runtime-contracts --format both
@@ -79,6 +82,8 @@ python -X utf8 "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" \
 4. 风格指引：reasoning、主角卡 OOC 警戒、anti_patterns
 5. 场景写法补充：`dynamic_context`，仅作风格参考，不能覆盖章纲约束
 
+国外合同提供 `editorial_guidance` 时，将主类型应用方式作为本章主要回报；辅类型按本书已选作用参与，不要求每章同时兑现。只消费与本章有关的跨章账本、场景检查和语言检查；用本章实际正文可核对的证据引导起草。反例只是诊断和改写练习，不复制示例人物、意象、节拍或句式。记录资源、能力、关系、信息变化时沿用项目设定和已接受事实；未兑现的承诺可以继续铺垫，不自动变成 `must_cover_nodes`。
+
 ### Step 1：context-agent 生成写作任务书
 
 必须使用 `Agent` 工具调用 `context-agent`，不得由主流程自行整理任务书。
@@ -91,6 +96,7 @@ Task:
 - scripts_dir=${SCRIPTS_DIR}
 - storage_path=${PROJECT_ROOT}/.webnovel
 - state_file=${PROJECT_ROOT}/.webnovel/state.json（projection/read-model，仅兼容读取）
+- writing_profile=${PROJECT_ROOT}/.story-system/WRITING_PROFILE.json；先用 writing_profile.py --project-root "${PROJECT_ROOT}" --bundles 验证，读取全部题材包及正文语言包；任务书明确正文语言、章长单位、POV/时态；国外不加载国内默认节奏。
 - 先 research，再按 本章硬性约束 → CBN/CPNs/CEN → 本章禁区 → 风格指引 → dynamic_context 补充参考 的顺序输出五段写作任务书。
 - 上下文不足时返回 blocker。
 
@@ -115,7 +121,7 @@ Task:
 
 ### Step 2：起草正文
 
-只根据任务书起草。不加载 core-constraints/anti-ai-guide（已内化到任务书）。只输出纯正文，无占位符。有结构化节点时围绕 CBN→CPNs→CEN 展开。中文思维写作。
+只根据任务书和其已加载的题材/语言指导起草，不重新加载国内 core-constraints/anti-ai-guide。只输出纯正文，无占位符。有结构化节点时围绕 CBN→CPNs→CEN 展开。正文为 zh 时用中文表达；为 en 时直接按英文句法、对白和叙述组织场景，不逐句翻译中文模板。管理沟通继续用中文。
 
 ### Step 3：审查
 
@@ -169,11 +175,11 @@ python -X utf8 -c "import json,os; from pathlib import Path; root=Path(os.enviro
 
 ### Step 4：润色
 
-`references/polish-guide.md` 区段读：先 `Grep` 匹配 `^#{1,3} ` 定位锚点行号，再 `Read` 的 offset/limit 取段——主路径取 `## 2. 执行顺序（必须按序）`；Anti-AI 终检单独区段取 `## 2A. Anti-AI 检测细则` 与 `## Phase 1 增补：Anti-AI 规范（7层，原版）`（词库段），不全文读。`references/writing/typesetting.md`、`references/style-adapter.md` 短文件，全文读。
+先按配置分支。国内：`references/polish-guide.md` 区段读，主路径取执行顺序；Anti-AI 终检再读对应规则段；`typesetting.md`、`style-adapter.md` 按需读。国外：读取 `../../references/writing-rules/README.md`、`references/language-advisory-guide.md`、全部已选国外题材包与对应 `zh/en` 语言包，不加载上述国内网文化、固定词频、said 标签比例、短句配额、40 字拆句或固定改写次数。
 
-顺序：修复非 blocking issue → 风格适配 → 排版 → Anti-AI 终检。
+顺序：修复事实问题 → 按项目语言与文风润色 → 排版 → 语言终检。国外把语言和审美观察另记 `language_advisory`，具体说明位置、理由及可选改写；不能写进五维事实 reviewer 的 issues/metrics，不能自动产生 blocking。
 
-只改表达不改事实。`anti_ai_force_check=fail` 时不进 Step 5。`--minimal` 仅排版。
+只改表达不改事实。国内保留既有 `anti_ai_force_check` 流程；国外不使用国内 Anti-AI 结果作事实提交门槛，不把语言建议混入事实阻断。`--minimal` 仅按正文语言排版。
 
 ### Step 5：提交
 
@@ -325,7 +331,7 @@ python -X utf8 "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" use
 1. 正文文件存在且非空
 2. 审查已落库（`--minimal` 除外）
 3. blocking=true 必须在 Step 3 定点修复或经用户裁决
-4. anti_ai_force_check=pass（`--minimal` 除外）
+4. 国内 anti_ai_force_check=pass（`--minimal` 除外）；国外已按语言包完成语言终检并单独记录建议，语言建议不自动事实阻断
 5. accepted CHAPTER_COMMIT，projection 五项 done/skipped
 6. chapter_status=committed（projection 自动推进）
 7. `write-gate` 的 prewrite / precommit / postcommit 均通过

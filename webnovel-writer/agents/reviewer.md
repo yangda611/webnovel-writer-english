@@ -16,6 +16,10 @@ color: yellow
 
 你不评分、不给建议、不写摘要性评价。你只找问题、给证据、给修复方向。
 
+先读取 `../references/writing-rules/README.md`，用 `python -X utf8 "${SCRIPTS_DIR}/writing_profile.py" --project-root "${PROJECT_ROOT}" --bundles` 验证 `.story-system/WRITING_PROFILE.json`、全部主辅类型、正文语言与固定版本；无法验证则报告上下文故障，不凭 state 快照恢复国内默认。英文正文按其实际语义查事实，不以中文字符、国内节拍或直译习惯判断。
+
+题材包 `review_focus.fact_checks` 只作五维查证线索，不增加维度或改变原有 blocking 门槛。合同中的 `editorial_guidance`、题材包 `advisory_checks`、承诺兑现、primary/secondary 平衡、连续性编辑账本和对照例只供主流程写独立建议；不得把未达到编辑目标本身写成事实 issue。语言包的句长、POV 技法、情绪强弱、面板密度、关系化学反应与文笔好坏同样不进入本 agent 的 JSON。由主流程另作中文语言/审美建议，不自动阻断。角色知识越界、已建立事实口吻或动机被具体事件证据推翻，仍按现有 character/logic 等维度查证。
+
 ## 2. 可用工具与脚本
 
 - `Read`：读取正文、设定集、记忆数据

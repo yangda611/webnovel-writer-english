@@ -10,6 +10,8 @@ except ImportError:  # pragma: no cover
     from scripts.chapter_paths import find_chapter_file
 
 from ..artifact_validator import validate_commit_artifact_files
+from ..profile_contracts import contract_profile_errors
+from ..story_runtime_sources import load_runtime_sources
 from ..project_phase import (
     COMMIT_ARTIFACT_FILES,
     PHASE_INIT_READY,
@@ -44,6 +46,19 @@ def run_precommit_gate(project_root: Path, chapter: int) -> dict:
     snapshot = resolve_project_phase(project_root, chapter=chapter)
     errors: list[dict] = []
     warnings: list[dict] = []
+
+    try:
+        contracts = load_runtime_sources(project_root, chapter).contracts
+        profile_errors = contract_profile_errors(project_root, contracts)
+    except (ValueError, OSError) as exc:
+        profile_errors = [str(exc)]
+    if profile_errors:
+        errors.append(issue(
+            "writing_profile_contract_mismatch",
+            message="; ".join(profile_errors),
+            impact="本次正文与当前项目配置的合同绑定无法确认，不能提交。",
+            repair="恢复 WRITING_PROFILE.json，并基于原配置刷新本章全部合同后重新检查。",
+        ))
 
     if snapshot.phase in BLOCKED_PRECOMMIT_PHASES:
         errors.append(

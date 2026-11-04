@@ -19,6 +19,10 @@ from .event_log_store import EventLogStore
 from .event_projection_router import EventProjectionRouter
 from .story_contracts import write_json
 from .index_manager import IndexManager
+from .text_metrics import chapter_measurement
+from .profile_contracts import contract_profile_errors, profile_meta
+from .story_runtime_sources import load_runtime_sources
+from .writing_profile import load_writing_profile
 from .override_ledger_service import (
     AmendProposalTrigger,
     ensure_override_ledger_columns,
@@ -46,17 +50,26 @@ class ChapterCommitService:
             fulfillment.missed_nodes
         ) or bool(disambiguation.pending)
         status = "rejected" if rejected else "accepted"
+        acceptance_meta = self._validate_acceptance(chapter) if status == "accepted" else {}
         volume = volume_num_for_chapter_from_state(self.project_root, chapter) or 1
         accepted_events = EventLogStore(self.project_root).normalize_events(
             chapter, extraction.accepted_events
         )
         extraction_payload = extraction.model_dump()
         extraction_payload["accepted_events"] = accepted_events
+        if status == "accepted":
+            chapter_meta = extraction_payload.get("chapter_meta")
+            if not isinstance(chapter_meta, dict):
+                chapter_meta = {}
+            chapter_meta.update(chapter_measurement(self.project_root, chapter,
+                incoming_count=self._safe_count(chapter_meta.get("word_count"))))
+            extraction_payload["chapter_meta"] = chapter_meta
         return {
             "meta": {
                 "schema_version": "story-system/v1",
                 "chapter": chapter,
                 "status": status,
+                **acceptance_meta,
             },
             "contract_refs": {
                 "master": "MASTER_SETTING.json",
@@ -87,6 +100,27 @@ class ChapterCommitService:
                 "vector": "pending",
             },
         }
+
+    def _validate_acceptance(self, chapter: int, payload: dict | None = None) -> dict:
+        """Bind accepted facts to all current contracts before any event write."""
+        if payload is not None:
+            # A queued commit's own explicit provenance remains a configuration
+            # marker even if its project's state and contracts were removed.
+            load_writing_profile(self.project_root, state=payload)
+        snapshot = load_runtime_sources(self.project_root, chapter)
+        errors = contract_profile_errors(self.project_root, snapshot.contracts, require_all=True)
+        if payload is not None:
+            errors.extend(contract_profile_errors(self.project_root, {"commit": payload}, require_all=True))
+        if errors:
+            raise ValueError("; ".join(errors))
+        return profile_meta(load_writing_profile(self.project_root))
+
+    @staticmethod
+    def _safe_count(value: Any) -> int:
+        try:
+            return max(0, int(value or 0))
+        except (TypeError, ValueError):
+            return 0
 
     def persist_commit(self, payload: Dict[str, Any]) -> Path:
         target = self.project_root / ".story-system" / "commits"
@@ -124,6 +158,8 @@ class ChapterCommitService:
         status = str((payload.get("meta") or {}).get("status") or "")
         if status not in {"accepted", "rejected"}:
             return payload
+        if status == "accepted":
+            self._validate_acceptance(int((payload.get("meta") or {}).get("chapter") or 0), payload)
 
         payload.setdefault("projection_status", {})
         if not isinstance(payload["projection_status"], dict):
@@ -168,6 +204,7 @@ class ChapterCommitService:
 
         if status == "accepted":
             chapter = int((payload.get("meta") or {}).get("chapter") or 0)
+            self._validate_acceptance(chapter, payload)
             event_store = EventLogStore(self.project_root)
             accepted_events = extraction_list(payload, "accepted_events")
             extraction = payload.setdefault("extraction_result", {})

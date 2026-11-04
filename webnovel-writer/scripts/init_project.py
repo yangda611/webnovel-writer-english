@@ -31,6 +31,11 @@ import re
 from security_utils import sanitize_commit_message, atomic_write_json, is_git_available
 from project_locator import write_current_project_pointer
 from genre_taxonomy import resolve_genre_input, resolve_template_stems
+from data_modules.writing_profile import (
+    WritingProfile, build_writing_profile, load_rule_bundles,
+    load_writing_profile, save_writing_profile,
+)
+from data_modules.rule_registry import resolve_genres
 
 
 # Windows 编码兼容性修复
@@ -38,17 +43,24 @@ if sys.platform == "win32":
     enable_windows_utf8_stdio()
 
 
-_ASCII_LETTER_RE = re.compile(r"[A-Za-z]")
-
-
 def _validate_initial_genre_source(genre: str) -> str:
-    normalized = str(genre or "").strip()
-    if _ASCII_LETTER_RE.search(normalized):
-        raise SystemExit(
-            "题材必须使用中文名称，不能使用英文 profile key "
-            f"'{normalized}'。例如：规则怪谈、悬疑、玄幻。"
-        )
-    return normalized
+    return str(genre or "").strip()
+
+
+def _overseas_output_templates(profile: WritingProfile) -> dict[str, str]:
+    """Neutral management scaffolds; no domestic preset or rhythm is loaded."""
+    bundles = load_rule_bundles(profile)
+    promises = "\n".join(f"- {'主类型' if index == 0 else '辅类型'} {pack['name']}：{pack['reader_promise']}"
+                         for index, pack in enumerate(bundles["genre_rules"]))
+    return {
+        "worldview": "# 世界观\n\n## 读者承诺\n" + promises + "\n\n## 世界规则\n- 核心势力：\n- 社会阶层：\n- 资源分配规则：\n- 货币体系：\n- 兑换规则：\n- 规则边界与信息可见性：\n",
+        "power": "# 力量体系\n\n- 体系类型：\n- 能力获得与练习：\n- 成本与失败后果：\n- 可验证的能力边界：\n- 数值或规则账本（仅适用时）：\n",
+        "protagonist": "# 主角卡\n\n- 姓名：\n- 真正渴望（可能不自知）：\n- 性格缺陷：\n- 初始资源与约束：\n- 关系与个人选择：\n",
+        "heroine": "# 女主卡\n\n- 姓名：\n- 与主角关系定位（对手/盟友/共谋/牵制）：\n- 独立目标与选择权：\n",
+        "team": "# 主角组\n\n| 姓名 | 叙事职责 | 目标 | 边界 | 关系 |\n|---|---|---|---|---|\n| 主角A | | | | |\n",
+        "outline": "# 总纲\n\n## 读者承诺\n" + promises + "\n\n## 卷结构\n| 卷号 | 核心冲突 | 章节范围 | 能力/关系变化 | 结果与代价 |\n|---|---|---|---|---|\n\n## 规划指导\n" + "\n".join(f"- {item}" for pack in bundles["genre_rules"] for item in pack["outline_guidance"]),
+        "antagonist": "# 反派设计\n\n- 对立目标：\n- 资源与行动边界：\n- 与主角冲突的具体原因：\n- 行动后果：\n",
+    }
 
 
 def _read_text_if_exists(path: Path) -> str:
@@ -62,6 +74,48 @@ def _write_text_if_missing(path: Path, content: str) -> None:
     if path.exists():
         return
     path.write_text(content, encoding="utf-8")
+
+
+def _validate_master_profile_reference(project_path: Path, profile: WritingProfile) -> None:
+    master_path = project_path / ".story-system" / "MASTER_SETTING.json"
+    if not master_path.exists():
+        return
+    try:
+        master = json.loads(master_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"MASTER_SETTING.json 缺失或损坏，无法校验写作配置：{exc}") from exc
+    if not isinstance(master, dict) or not isinstance(master.get("meta") or {}, dict):
+        raise ValueError("MASTER_SETTING.json 结构损坏，无法校验写作配置")
+    old_ref = (master.get("meta") or {}).get("writing_profile_ref") or {}
+    if not isinstance(old_ref, dict):
+        raise ValueError("MASTER_SETTING writing_profile_ref 结构损坏")
+    if old_ref and old_ref.get("legacy") is not True and old_ref != profile.reference():
+        raise ValueError("MASTER_SETTING writing profile reference conflicts; explicit migration is required")
+
+
+def _ensure_profile_master(project_path: Path, profile: WritingProfile) -> None:
+    if profile.reference().get("legacy"):
+        return
+    _validate_master_profile_reference(project_path, profile)
+    master_path = project_path / ".story-system" / "MASTER_SETTING.json"
+    if master_path.exists():
+        from data_modules.profile_contracts import contract_profile_errors
+
+        master = json.loads(master_path.read_text(encoding="utf-8"))
+        if not contract_profile_errors(project_path, {"MASTER_SETTING": master}):
+            return
+    from data_modules.story_contracts import persist_story_seed
+
+    persist_story_seed(project_path, {
+        "meta": {"contract_type": "MASTER_SETTING", "schema_version": "story-system/v1",
+                 "writing_profile_ref": profile.reference(), "rule_pack_versions": profile.rule_pack_versions,
+                 "language_pack_version": profile.language_pack_version,
+                 "market": profile.market, "body_language": profile.body_language},
+        "route": {"primary_genre": profile.primary_genre, "secondary_genres": profile.secondary_genres,
+                  "market": profile.market, "body_language": profile.body_language},
+        "master_constraints": {"writing_profile": profile.to_snapshot()},
+        "base_context": [], "source_trace": [],
+    }, None, [])
 
 
 def _split_genre_keys(genre: str) -> list[str]:
@@ -268,14 +322,76 @@ def init_project(
     sect_hierarchy: str = "",
     cultivation_chain: str = "",
     cultivation_subtiers: str = "",
+    market: str | None = None,
+    body_language: str | None = None,
+    secondary_genres: list[str] | None = None,
+    chapter_length: int | None = None,
+    chapter_unit: str | None = None,
+    pov: str | None = None,
+    tense: str | None = None,
+    allow_draft_rules: bool | None = None,
 ) -> None:
     project_path = Path(project_dir).expanduser().resolve()
     if ".claude" in project_path.parts:
         raise SystemExit("Refusing to initialize a project inside .claude. Choose a different directory.")
     genre = _validate_initial_genre_source(genre)
-    genre_resolution = resolve_genre_input(genre)
-    canonical_genre = genre_resolution.canonical_genre or genre
+    # Validate every choice before creating or changing any project files.
+    try:
+        previous = load_writing_profile(project_path)
+        profile_file = project_path / ".story-system" / "WRITING_PROFILE.json"
+        existing_state = _read_text_if_exists(project_path / ".webnovel" / "state.json")
+        try:
+            previous_state = json.loads(existing_state) if existing_state else {}
+        except json.JSONDecodeError:
+            previous_state = {}  # Existing legacy recovery below keeps a copy.
+        previous_info = previous_state.get("project_info") or previous_state.get("project") or {}
+        if not previous_info.get("title"):
+            previous_info = previous_state.get("project") or previous_info
+        has_project = bool(previous_info.get("title"))
+        if not has_project and not profile_file.exists() and any((project_path / "正文").rglob("*.md")):
+            raise ValueError("已有正文但项目标识缺失，拒绝重新初始化；请先恢复原项目元信息")
+        master_path = project_path / ".story-system" / "MASTER_SETTING.json"
+        if not has_project and not profile_file.exists() and master_path.exists():
+            raise ValueError("已有 MASTER_SETTING.json，但缺少项目书名状态；请先恢复项目身份，拒绝重新初始化")
+        use_previous = profile_file.exists() or has_project
+        if use_previous and ((market is not None and market != previous.market)
+                             or (body_language is not None and body_language != previous.body_language)):
+            raise ValueError("已有项目市场／正文语言与本次选择不同，拒绝重复初始化覆盖")
+        selected_secondaries = secondary_genres
+        if use_previous and secondary_genres is None:
+            requested = resolve_genres(genre, None, previous.market)
+            if requested == [previous.primary_genre]:
+                selected_secondaries = previous.secondary_genres
+        profile = build_writing_profile(
+            market=market or (previous.market if use_previous else "domestic"),
+            body_language=body_language or (previous.body_language if use_previous else "zh"),
+            genre=genre, secondary_genres=selected_secondaries,
+            chapter_length=chapter_length if chapter_length is not None else (previous.chapter_length if use_previous else None),
+            chapter_unit=chapter_unit or (previous.chapter_unit if use_previous else None),
+            pov=pov if pov is not None else (previous.pov if use_previous else None),
+            tense=tense if tense is not None else (previous.tense if use_previous else None),
+            platform=platform or (previous.platform if use_previous else None),
+            allow_draft_rules=allow_draft_rules if allow_draft_rules is not None else (previous.allow_draft_rules if use_previous else False),
+            rule_pack_versions=previous.rule_pack_versions if use_previous else None,
+            language_pack_version=previous.language_pack_version if use_previous else None,
+        )
+        if use_previous and profile.to_snapshot() != previous.to_snapshot():
+            raise ValueError("已有项目配置与本次选择不同，拒绝重复初始化覆盖")
+        _validate_master_profile_reference(project_path, previous if use_previous else profile)
+        if has_project:
+            if title != previous_info["title"]:
+                raise ValueError("已有项目书名不同，拒绝重复初始化覆盖")
+            _ensure_profile_master(project_path, previous)
+            print(f"项目已初始化，保留已有配置和内容：{project_path}")
+            return
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    all_genres = [profile.primary_genre, *profile.secondary_genres]
+    domestic_genre_input = "+".join([genre, *(secondary_genres or [])])
+    genre_resolution = resolve_genre_input(domestic_genre_input) if profile.market == "domestic" else None
+    canonical_genre = (genre_resolution.canonical_genre or genre) if genre_resolution else profile.primary_genre
     project_path.mkdir(parents=True, exist_ok=True)
+    save_writing_profile(project_path, profile)
 
     # 目录结构（同时兼容“卷目录”与后续扩展）
     directories = [
@@ -311,13 +427,20 @@ def init_project(
         {
             "title": title,
             "genre": canonical_genre,
-            "genre_label": genre,
+            "genre_label": domestic_genre_input if profile.market == "domestic" else "+".join(all_genres),
             "genre_tags": {
-                "route": genre_resolution.route_tags,
-                "trope": genre_resolution.trope_tags,
-                "format": genre_resolution.format_tags,
-                "templates": [Path(name).stem for name in genre_resolution.template_files],
+                "route": genre_resolution.route_tags if genre_resolution else all_genres,
+                "trope": genre_resolution.trope_tags if genre_resolution else [],
+                "format": genre_resolution.format_tags if genre_resolution else [],
+                "templates": [Path(name).stem for name in genre_resolution.template_files] if genre_resolution else [],
             },
+            "market": profile.market,
+            "body_language": profile.body_language,
+            "primary_genre": profile.primary_genre,
+            "secondary_genres": profile.secondary_genres,
+            "writing_profile": profile.to_snapshot(),
+            "writing_profile_ref": profile.reference(),
+            "count_unit": profile.chapter_unit,
             "created_at": created_at,
             "target_words": int(target_words),
             "target_chapters": int(target_chapters),
@@ -367,16 +490,18 @@ def init_project(
 
     state["progress"]["last_updated"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     state_path.parent.mkdir(parents=True, exist_ok=True)
+    state["progress"]["count_unit"] = profile.chapter_unit
     # 使用原子化写入（初始化不需要备份旧文件）
     atomic_write_json(state_path, state, use_lock=True, backup=False)
+    _ensure_profile_master(project_path, profile)
 
     # 读取内置模板（可选）
     script_dir = Path(__file__).resolve().parent
     templates_dir = script_dir.parent / "templates"
     output_templates_dir = templates_dir / "output"
     genre_key = (genre or "").strip()
-    template_files = list(genre_resolution.template_files)
-    if not template_files:
+    template_files = list(genre_resolution.template_files) if genre_resolution else []
+    if not template_files and profile.market == "domestic":
         template_files = [f"{_normalize_genre_key(k)}.md" for k in _split_genre_keys(genre_key)]
     genre_templates = []
     seen = set()
@@ -388,13 +513,29 @@ def init_project(
         if template_text:
             genre_templates.append(template_text.strip())
     genre_template = "\n\n---\n\n".join(genre_templates)
-    output_worldview = _read_text_if_exists(output_templates_dir / "设定集-世界观.md")
-    output_power = _read_text_if_exists(output_templates_dir / "设定集-力量体系.md")
-    output_protagonist = _read_text_if_exists(output_templates_dir / "设定集-主角卡.md")
-    output_heroine = _read_text_if_exists(output_templates_dir / "设定集-女主卡.md")
-    output_team = _read_text_if_exists(output_templates_dir / "设定集-主角组.md")
-    output_outline = _read_text_if_exists(output_templates_dir / "大纲-总纲.md")
-    output_antagonist = _read_text_if_exists(output_templates_dir / "设定集-反派设计.md")
+    if profile.market == "domestic":
+        output_worldview = _read_text_if_exists(output_templates_dir / "设定集-世界观.md")
+        output_power = _read_text_if_exists(output_templates_dir / "设定集-力量体系.md")
+        output_protagonist = _read_text_if_exists(output_templates_dir / "设定集-主角卡.md")
+        output_heroine = _read_text_if_exists(output_templates_dir / "设定集-女主卡.md")
+        output_team = _read_text_if_exists(output_templates_dir / "设定集-主角组.md")
+        output_outline = _read_text_if_exists(output_templates_dir / "大纲-总纲.md")
+        output_antagonist = _read_text_if_exists(output_templates_dir / "设定集-反派设计.md")
+    else:
+        neutral = _overseas_output_templates(profile)
+        output_worldview, output_power = neutral["worldview"], neutral["power"]
+        output_protagonist, output_heroine = neutral["protagonist"], neutral["heroine"]
+        output_team, output_outline, output_antagonist = neutral["team"], neutral["outline"], neutral["antagonist"]
+        _write_text_if_missing(project_path / "设定集" / "创作规则.md",
+                               "# 创作规则（draft 试用）\n\n" + json.dumps(load_rule_bundles(profile), ensure_ascii=False, indent=2) + "\n")
+        _write_text_if_missing(project_path / "大纲" / "题材承诺.md",
+                               "# 题材承诺与跨章后果\n\n" +
+                               "本页是可增量编辑的规划说明，引用已确认设定与已发生事件；不代替事实记录。不要求每章兑现全部主辅题材。\n\n" +
+                               neutral["outline"].split("## 卷结构", 1)[0].replace("# 总纲\n\n", "") +
+                               "\n## 本书的作用分配\n- 主要回报：\n- 各辅类型参与方式与取舍：\n- 卷末或全书的关系／能力／机制承诺：\n\n" +
+                               "## 跨章规划\n| 承诺或问题 | 已有正文／设定依据 | 后续验证机会 | 代价与仍有的限制 |\n|---|---|---|---|\n\n" +
+                               "## 连续性备忘（只引用已确认事实）\n| 能力／资源／关系／信息 | 章前 | 变化与原因 | 章后 | 事实来源 |\n|---|---|---|---|---|\n\n" +
+                               "未兑现部分可以保留为铺垫；不要为填表臆造升级、关系变化或恢复。\n")
 
     # 基础文件（只在缺失时生成，避免覆盖已有内容）
     now = datetime.now().strftime("%Y-%m-%d")
@@ -665,6 +806,8 @@ __pycache__/
 .webnovel/context_cache.json
 .webnovel/*.lock
 .webnovel/*.bak
+.story-system/*.lock
+.story-system/**/*.lock
 """,
                         encoding="utf-8",
                     )
@@ -711,6 +854,14 @@ def main() -> None:
     parser.add_argument("--protagonist-name", default="", help="主角姓名")
     parser.add_argument("--target-words", type=int, default=2_000_000, help="目标总字数（默认 2000000）")
     parser.add_argument("--target-chapters", type=int, default=600, help="目标总章节数（默认 600）")
+    parser.add_argument("--market", choices=["domestic", "overseas"], default=None, help="国内／国外英语读者市场")
+    parser.add_argument("--body-language", choices=["zh", "en"], default=None, help="正文语言；交互说明默认中文")
+    parser.add_argument("--secondary-genre", action="append", default=None, help="辅题材，可重复传入")
+    parser.add_argument("--chapter-length", type=int, default=None, help="目标章长，单位随正文语言")
+    parser.add_argument("--chapter-unit", choices=["characters", "words"], default=None)
+    parser.add_argument("--pov", default=None)
+    parser.add_argument("--tense", default=None)
+    parser.add_argument("--allow-draft-rules", action="store_true", default=None, help="显式试用尚未正式支持的规则包")
 
     parser.add_argument("--golden-finger-name", default="", help="金手指称呼/系统名（建议读者可见的代号）")
     parser.add_argument("--golden-finger-type", default="", help="金手指类型（如 系统流/鉴定流/签到流）")
@@ -782,6 +933,9 @@ def main() -> None:
         sect_hierarchy=args.sect_hierarchy,
         cultivation_chain=args.cultivation_chain,
         cultivation_subtiers=args.cultivation_subtiers,
+        market=args.market, body_language=args.body_language, secondary_genres=args.secondary_genre,
+        chapter_length=args.chapter_length, chapter_unit=args.chapter_unit, pov=args.pov, tense=args.tense,
+        allow_draft_rules=args.allow_draft_rules,
     )
 
 

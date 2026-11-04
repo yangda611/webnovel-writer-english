@@ -23,6 +23,7 @@ from typing import Any, Dict, List
 from chapter_outline_loader import load_chapter_outline, load_chapter_plot_structure
 
 from runtime_compat import enable_windows_utf8_stdio
+from data_modules.writing_profile import load_writing_profile
 
 try:
     from chapter_paths import find_chapter_file
@@ -114,12 +115,14 @@ def extract_state_summary(project_root: Path) -> str:
         return "⚠️ state.json 不存在"
 
     state = json.loads(state_file.read_text(encoding="utf-8"))
+    profile = load_writing_profile(project_root, state=state)
+    count_unit = "词" if profile.chapter_unit == "words" else "字"
     summary_parts: List[str] = []
 
     if "progress" in state:
         progress = state["progress"]
         summary_parts.append(
-            f"**进度**: 第{progress.get('current_chapter', '?')}章 / {progress.get('total_words', '?')}字"
+            f"**进度**: 第{progress.get('current_chapter', '?')}章 / {progress.get('total_words', '?')}{count_unit}"
         )
 
     if "protagonist_state" in state:

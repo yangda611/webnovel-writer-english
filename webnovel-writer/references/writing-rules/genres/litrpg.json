@@ -1,0 +1,165 @@
+{
+  "id": "litrpg",
+  "version": "1.1.0",
+  "status": "draft",
+  "market": "overseas",
+  "name": "游戏机制叙事（LitRPG）",
+  "reader_promise": "可识别的角色扮演游戏机制参与塑造人物的选择、风险与成长，机制产生的结果对故事有实际意义。",
+  "scope": {
+    "includes": [
+      "游戏世界或具有游戏机制的现实",
+      "属性、技能、职业、经验或资源等会影响情节的规则",
+      "规则内的探索与策略选择"
+    ],
+    "not_required": [
+      "所有章节展示完整面板",
+      "固定的系统播报口吻",
+      "无敌主角",
+      "强制使用某套游戏或修仙术语"
+    ],
+    "boundaries": "依据作者 Aleron Kong 官方站点的宽泛定义建立草案。LitRPG 与 GameLit 的边界存在使用差异，本包不把一种作者定义包装成行业统一标准。",
+    "evidence_status": "机制设计建议为本项目编辑方案；尚未验证读者对面板密度、数值复杂度或平台章长的偏好。"
+  },
+  "init_questions": [
+    "游戏机制为何存在，哪些人能看到界面，谁能修改或误读它？",
+    "哪些属性、技能或资源真正影响选择？成长和失败各如何计算？",
+    "死亡、受伤、重置、复活与惩罚的规则是什么？",
+    "读者能获得哪些规则信息，哪些信息会被有意延后？主角与读者的知识差如何保持公平？",
+    "面板如何展示，术语是否需要中文、英文或双语对照？哪些只是排版选择？"
+  ],
+  "outline_guidance": [
+    "建立最小规则账本：输入、消耗、判定、结果、例外与信息可见性；先解释当前情节实际需要的部分。",
+    "关键解法在使用前给出足够线索，规则变化须有故事内依据。",
+    "让配装、分点、技能组合或协作形成有后果的选择，避免每次选项都有唯一显然正确答案。",
+    "卷级成长与社会、关系或生存问题相互作用；数值增加本身不替代剧情结果。",
+    "混合题材分别承诺，不默认使用国内游戏模板或修仙境界作缺省。"
+  ],
+  "writing_guidance": [
+    "仅在读者需要判断选择或理解后果时展示相关数值；完整角色表可单独维护。",
+    "同一资源在叙述、面板和行动结果中使用一致单位；区分角色推测与已确认系统规则。",
+    "用角色在规则压力下的行动保持场景连续，避免连续播报盖过人物经验。",
+    "根据语言包处理界面标点、术语大小写与复数；管理 JSON 键保持原样，正文名称按项目术语表。"
+  ],
+  "review_focus": {
+    "fact_checks": [
+      "资源增减、等级、技能前置和冷却是否与记录一致",
+      "界面可见性是否造成知识越界",
+      "例外或胜利条件是否与先前规则矛盾"
+    ],
+    "advisory_checks": [
+      "机制是否改变选择",
+      "面板是否打断当前体验",
+      "规则信息是否足够支持读者理解而不淹没故事"
+    ],
+    "advisory_policy": "面板密度、趣味与审美仅提供独立建议；事实阻断仍由既有五维证据决定。"
+  },
+  "examples": [
+    {
+      "language": "zh",
+      "text": "【护盾：4／4】\n【维持：每息消耗 1 点专注】\n米拉没有开盾。门闩还要三息才会松，她只有两点专注。她把仅剩的升级点留在掌心，先问门后的少年：‘你能自己跑吗？’",
+      "commentary": "原创演示：规则支持一个具有取舍的决定；数字格式仅为本项目示例。"
+    },
+    {
+      "language": "en",
+      "text": "Shield: 4/4. Upkeep: 1 Focus per second.\nMira dismissed it. The latch would need three seconds; she had two Focus left. Spending her upgrade point would solve that. It would also leave her brother without a healer.",
+      "commentary": "原创演示：界面只显示与本次决定有关的信息；不规定所有作品必须使用这种面板。"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.litrpg.com/litrpgblog/2019/10/6/what-is-litrpg",
+      "title": "What is LitRPG?",
+      "publisher_or_author": "Aleron Kong 官方站点 LitRPG.com",
+      "accessed_on": "2026-11-03",
+      "read_scope": "实际通过 web 打开正文并在本地 HTTP 读取，核实明确成长和作为故事必要部分的游戏型世界这两项作者定义；该文没有提供 GameLit 的定义。",
+      "limits": "作者站点的定义性文章，非跨平台统一规范；没有读取其付费作品全文。"
+    },
+    {
+      "url": "https://andrewkrowe.wordpress.com/2019/02/26/progression-fantasy-a-new-subgenre-concept/",
+      "title": "Progression Fantasy: A New Subgenre Concept",
+      "publisher_or_author": "Andrew Rowe",
+      "accessed_on": "2026-11-03",
+      "read_scope": "读取 LitRPG 和成长奇幻可能重叠但不等同的讨论。",
+      "limits": "只用于防止自动混同两个类型，不用于证明本包的所有编辑建议。"
+    }
+  ],
+  "revision_notes": {
+    "previous_version": "1.0.0",
+    "evidence_basis": "1.1.0 新增内容是本项目编辑方案，依照已读来源的类型边界设计；不是来源原文、统一行业规则或已验证的读者偏好。连续样章和模型交叉审稿只提供有限案例证据。",
+    "validation_record": "docs/research/overseas-quality-round2/README.md"
+  },
+  "editorial_framework": {
+    "evidence_basis": "1.1.0 新增内容是本项目编辑方案，依照已读来源的类型边界设计；不是来源原文、统一行业规则或已验证的读者偏好。连续样章和模型交叉审稿只提供有限案例证据。",
+    "primary_application": "让可识别的游戏机制及持续成长真正塑造选择。先定义最小可算规则和角色当前状态，再让有机会成本的技能、资源或配装决定改变行动；不是把普通任务结算成一串数字。",
+    "secondary_application": "游戏规则可支撑成长、关系或其他主线。保留足够信息使关键判定可理解，清楚安排后续成长；面板密度和每章数值变化不应挤走主类型的核心承诺。",
+    "promise_horizon": [
+      {
+        "horizon": "场景",
+        "question": "规则使角色放弃了什么可行选项？",
+        "evidence": "前提、消耗、已知结果和实际选择互相吻合；读者能理解取舍，不必知道所有公式。"
+      },
+      {
+        "horizon": "跨章",
+        "question": "前章的状态和成长怎样影响后章解法？",
+        "evidence": "技能分支、剩余资源、冷却、伤害或承诺实际延续，不因换章刷新。"
+      },
+      {
+        "horizon": "卷",
+        "question": "成长的方向及其机会成本改变了哪些可能性？",
+        "evidence": "能力或可用策略的真实变化；升级不是凭空解决社会、经济或关系问题。"
+      }
+    ],
+    "continuity_ledger": [
+      {
+        "field": "资源算式",
+        "record": "每次初值→增减及原因→终值、单位、上限、恢复时间/条件。",
+        "carryover_check": "叙述、面板和后章初值一致；超过上限、负值或回满需有已建立规则。"
+      },
+      {
+        "field": "成长与技能",
+        "record": "经验/熟练/升级前提、选择分支、技能效果、消耗、持续时间、冷却及适用对象。",
+        "carryover_check": "至少规划明确成长；新选项的使用不能倒推发明前提，未选分支不能当作已获得。"
+      },
+      {
+        "field": "界面与知识",
+        "record": "谁看见什么、何为系统确认、何为人物推测、误报和权限限制。",
+        "carryover_check": "POV 是否把他人的私有面板、隐藏目标或未知规则写成已知？"
+      },
+      {
+        "field": "现实后果",
+        "record": "机制决定影响的时间、伤害、工作、财产、关系及契约。",
+        "carryover_check": "结算奖励是否误抹除了伤害、债务或他人的选择？"
+      }
+    ],
+    "scene_checks": [
+      {
+        "question": "拿掉面板，角色还会做同样决定吗？",
+        "evidence": "找出一项由规则改变的选择及被放弃的选项；不是硬要求每个对话都展示数值。"
+      },
+      {
+        "question": "读者在决定发生前能判断风险吗？",
+        "evidence": "明确已知与未知信息；解围所用例外需有铺垫，不要求预告所有反转。"
+      },
+      {
+        "question": "成长是否只有提示，没有后续应用？",
+        "evidence": "指向不同解法或待兑现的具体任务；若只有修复资源不足，应如实记录尚未展示成长。"
+      }
+    ],
+    "contrast_cases": [
+      {
+        "language": "en",
+        "weak": "Repair complete. +10 XP. She felt stronger and repaired the next door.",
+        "revision": "The ten practice marks unlocked a choice: mend heavier iron, or keep a light mend alive after she let go. Nell chose release. The old weight limit stayed. She could not save the gate, but she could leave the latch holding while she pulled Jory clear.",
+        "reason": "解锁条件须预先建立；选择新分支、保留重量限制，并让策略变化参与结果。",
+        "limits": "原创对照；十点、门闩和二选一不是本包强制机制。"
+      },
+      {
+        "language": "zh",
+        "weak": "她用光法力修好灯，系统奖励经验，众人欢呼。",
+        "revision": "四点电荷，补线要三点，照明要两点。她关了头灯，摸黑补好第一段线。新增的分流技能能把剩下的一点送到站牌，却点不亮整条隧道。",
+        "reason": "数字参与取舍和有限应用；技能如何取得及其效果仍须前文建立。",
+        "limits": "独立中文示例，不套国内系统爽点或固定界面样式。"
+      }
+    ]
+  }
+}

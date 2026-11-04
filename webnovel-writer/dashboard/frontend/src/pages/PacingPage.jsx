@@ -6,7 +6,7 @@ import ChartWrapper from '../components/ChartWrapper.jsx'
 import Pager from '../components/Pager.jsx'
 import { STRAND_COLORS, buildBoxplotData } from '../lib/charts.js'
 import { average, formatChapterLabel, formatNumber, formatShortNumber } from '../lib/format.js'
-import { groupChaptersByVolume } from '../lib/story.js'
+import { countLabels, groupChaptersByVolume } from '../lib/story.js'
 
 const WINDOW_SIZE = 50
 
@@ -110,7 +110,7 @@ function buildStrandStackOption(items) {
     }
 }
 
-function buildWordBoxOption(groups) {
+function buildWordBoxOption(groups, unit) {
     return {
         tooltip: { trigger: 'item' },
         xAxis: {
@@ -119,6 +119,7 @@ function buildWordBoxOption(groups) {
         },
         yAxis: {
             type: 'value',
+            name: unit,
             axisLabel: {
                 formatter: value => `${formatShortNumber(Number(value) / 1000)}k`,
             },
@@ -149,6 +150,7 @@ function StatCard({ label, value, sub }) {
 
 export default function PacingPage() {
     const { projectInfo, refreshToken } = useDashboardContext()
+    const count = countLabels(projectInfo)
     const [allChapters, setAllChapters] = useState([])
     const [windowIndex, setWindowIndex] = useState(0)
     const [windowPayload, setWindowPayload] = useState({ items: [], total: 0, latest_chapter: 0 })
@@ -243,7 +245,7 @@ export default function PacingPage() {
                     sub="当前窗口内标记为 transition 的章节"
                 />
                 <StatCard
-                    label="总字数"
+                    label={`总${count.name}`}
                     value={formatNumber(allChapters.reduce((sum, item) => sum + Number(item.word_count || 0), 0))}
                     sub={`最新章节 ${formatChapterLabel(windowPayload.latest_chapter)}`}
                 />
@@ -303,15 +305,15 @@ export default function PacingPage() {
                     <div className="card-header">
                         <div>
                             <div className="section-label">WORD BOXPLOT</div>
-                            <div className="card-title">章节字数分布</div>
+                            <div className="card-title">章节{count.name}分布</div>
                         </div>
                         <Badge tone="blue">按卷分组</Badge>
                     </div>
                     {groups.length ? (
-                        <ChartWrapper option={buildWordBoxOption(groups)} />
+                        <ChartWrapper option={buildWordBoxOption(groups, count.unit)} />
                     ) : (
                         <div className="empty-state">
-                            <p>暂无章节字数数据</p>
+                            <p>暂无章节{count.name}数据</p>
                         </div>
                     )}
                 </article>

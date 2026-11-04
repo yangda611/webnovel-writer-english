@@ -1,0 +1,95 @@
+{
+  "date": "2026-11-03",
+  "timezone": "Asia/Shanghai",
+  "platform": "Windows",
+  "branch": "codex/market-language-profile",
+  "baseline_commit": "b38056e",
+  "python": "3.12.10",
+  "node": "22.23.4",
+  "npm": "10.9.9",
+  "suite": {
+    "tests": 971,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 31.07,
+    "exit_code": 0
+  },
+  "coverage": {
+    "covered_lines": 10459,
+    "statements": 11599,
+    "missing_lines": 1140,
+    "percent": 90.17156651435469,
+    "fail_under": 90,
+    "passed": true
+  },
+  "public_cli_smoke": [
+    {
+      "market": "domestic",
+      "body_language": "zh",
+      "secondary_genres": [
+        "仙侠",
+        "悬疑"
+      ],
+      "chapter_unit": "characters",
+      "repeated_init": true,
+      "public_cli": true
+    },
+    {
+      "market": "overseas",
+      "body_language": "zh",
+      "secondary_genres": [
+        "litrpg",
+        "romantasy"
+      ],
+      "chapter_unit": "characters",
+      "repeated_init": true,
+      "public_cli": true
+    },
+    {
+      "market": "overseas",
+      "body_language": "en",
+      "secondary_genres": [
+        "litrpg",
+        "romantasy"
+      ],
+      "chapter_unit": "words",
+      "repeated_init": true,
+      "public_cli": true
+    }
+  ],
+  "independent_review": {
+    "initial_readonly_audit_findings": 2,
+    "initialization_and_archive_fixes_added": true,
+    "final_readonly_audit": "completed; no remaining reproducible Critical, Important, or Minor findings"
+  },
+  "sample_chain": {
+    "cases": 4,
+    "chapters": 8,
+    "integration_tests_passed": 4,
+    "reviewer_blocking_issues": 0,
+    "human_reader_or_native_editor_validation": false
+  },
+  "rule_pack_archives": {
+    "current_version": "1.1.0",
+    "immutable_snapshots": 5,
+    "sha256_match_current_packages": true
+  },
+  "frontend_build": {
+    "exit_code": 0,
+    "modules": 674,
+    "existing_large_chart_chunk_warning": true
+  },
+  "plugin_package_strict": {
+    "errors": 0,
+    "warnings": 0,
+    "exit_code": 0
+  },
+  "rule_pack_status": "1.1.0 draft; no formal support claim",
+  "literary_quality": "four model cross-reviewed two-chapter cases; no native-editor, target-reader, or platform validation",
+  "environment": {
+    "PYTHONUTF8": "1",
+    "tests_excluded": 0,
+    "coverage_threshold_changed": false
+  }
+}

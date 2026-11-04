@@ -12,6 +12,7 @@ from runtime_compat import enable_windows_utf8_stdio
 from data_modules.runtime_contract_builder import RuntimeContractBuilder
 from data_modules.story_contracts import persist_runtime_contracts, persist_story_seed
 from data_modules.story_system_engine import StorySystemEngine, StorySystemRoutingError, is_placeholder_query
+from data_modules.writing_profile import load_writing_profile
 from chapter_outline_loader import load_chapter_execution_directive
 
 
@@ -76,15 +77,16 @@ def main() -> None:
         if args.chapter
         else {}
     )
-    engine = StorySystemEngine(csv_dir=csv_dir)
     try:
+        profile = load_writing_profile(project_root)
+        engine = StorySystemEngine(csv_dir=csv_dir, writing_profile=profile)
         contract = engine.build(
             query=args.query,
             genre=args.genre or None,
             chapter=args.chapter or None,
             chapter_directive=chapter_directive,
         )
-    except StorySystemRoutingError as exc:
+    except (ValueError, OSError) as exc:
         parser.exit(2, f"error: {exc}\n")
 
     if args.persist:

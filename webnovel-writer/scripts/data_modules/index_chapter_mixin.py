@@ -14,21 +14,26 @@ from typing import Any, Dict, List, Optional
 class IndexChapterMixin:
     def add_chapter(self, meta: ChapterMeta):
         """添加/更新章节元数据"""
+        from .text_metrics import chapter_measurement
+
+        measurement = chapter_measurement(self.config.project_root, meta.chapter,
+                                        incoming_count=meta.word_count)
         with self._get_conn() as conn:
             cursor = conn.cursor()
             cursor.execute(
                 """
                 INSERT OR REPLACE INTO chapters
-                (chapter, title, location, word_count, characters, summary)
-                VALUES (?, ?, ?, ?, ?, ?)
+                (chapter, title, location, word_count, characters, summary, count_unit)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
                 (
                     meta.chapter,
                     meta.title,
                     meta.location,
-                    meta.word_count,
+                    measurement["word_count"],
                     json.dumps(meta.characters, ensure_ascii=False),
                     meta.summary,
+                    measurement["count_unit"],
                 ),
             )
             conn.commit()

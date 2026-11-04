@@ -13,9 +13,13 @@ from reference_search import (
     resolve_genre,
     search as search_reference,
     split_multi_value,
+    market_matches,
 )
 
 from .story_contracts import merge_anti_patterns
+from .profile_contracts import profile_meta
+from .writing_profile import WritingProfile, load_rule_bundles
+from .editorial_guidance import build_editorial_guidance
 
 
 ANTI_PATTERN_SOURCE_FIELDS = {
@@ -59,8 +63,9 @@ def _validate_explicit_genre_source(genre: Optional[str]) -> Optional[str]:
 
 
 class StorySystemEngine:
-    def __init__(self, csv_dir: str | Path):
+    def __init__(self, csv_dir: str | Path, writing_profile: WritingProfile | None = None):
         self.csv_dir = Path(csv_dir)
+        self.writing_profile = writing_profile
 
     def build(
         self,
@@ -70,6 +75,17 @@ class StorySystemEngine:
         chapter_directive: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         chapter_directive = chapter_directive or {}
+        if self.writing_profile and not self.writing_profile.reference().get("legacy"):
+            from .rule_registry import resolve_genres
+
+            if genre:
+                selected = resolve_genres(genre, None, self.writing_profile.market)
+                configured = [self.writing_profile.primary_genre, *self.writing_profile.secondary_genres]
+                if selected[0] != configured[0] or (len(selected) > 1 and selected != configured):
+                    raise StorySystemRoutingError("--genre conflicts with the project's writing profile")
+            if self.writing_profile.market == "overseas":
+                return self._build_overseas(query, chapter, chapter_directive)
+            genre = self.writing_profile.primary_genre
         genre = _validate_explicit_genre_source(genre)
         route = self._route(query=query, genre=genre)
         search_query = self._expand_query(
@@ -108,7 +124,7 @@ class StorySystemEngine:
         )
         anti_patterns = self._rank_anti_patterns(reasoning, raw_anti)
 
-        return {
+        result = {
             "meta": {"query": query, "chapter": chapter, "explicit_genre": genre or ""},
             "master_setting": {
                 "meta": {
@@ -160,6 +176,58 @@ class StorySystemEngine:
             ),
             "anti_patterns": anti_patterns,
         }
+        self._attach_profile(result)
+        return result
+
+    def _attach_profile(self, result: Dict[str, Any]) -> None:
+        profile = self.writing_profile
+        if not profile or profile.reference().get("legacy"):
+            return
+        bundles = load_rule_bundles(profile)
+        editorial = build_editorial_guidance(profile, bundles)
+        for payload in (result["master_setting"], result.get("chapter_brief")):
+            if payload is not None:
+                payload["meta"].update(profile_meta(profile))
+                payload["editorial_guidance"] = editorial
+        if result.get("chapter_brief") is not None:
+            result["chapter_brief"]["language_rules"] = bundles["language_rules"]
+        result["master_setting"]["route"].update({
+            "primary_genre": profile.primary_genre,
+            "secondary_genres": list(profile.secondary_genres),
+            "market": profile.market, "body_language": profile.body_language,
+        })
+        result["master_setting"]["master_constraints"].update({
+            "writing_profile": profile.to_snapshot(),
+            "chapter_length": profile.chapter_length, "chapter_unit": profile.chapter_unit,
+            "pov": profile.pov, "tense": profile.tense, "platform": profile.platform,
+            "language_rules": bundles["language_rules"],
+        })
+
+    def _build_overseas(self, query: str, chapter: Optional[int], directive: Dict[str, Any]) -> Dict[str, Any]:
+        # This branch never opens domestic CSVs, reasoning rows or genre fallbacks.
+        profile = self.writing_profile
+        bundles = load_rule_bundles(profile)
+        packs = bundles["genre_rules"]
+        trace = [{"table": "writing-rules", "id": pack["id"], "version": pack["version"], "sources": pack.get("sources", [])} for pack in packs]
+        result = {
+            "meta": {"query": query, "chapter": chapter},
+            "master_setting": {
+                "meta": {"schema_version": "story-system/v1", "contract_type": "MASTER_SETTING", "generator_version": "writing-profile/v1", "query": query},
+                "route": {"canonical_genre": profile.primary_genre, "route_source": "writing_profile"},
+                "master_constraints": {"reader_promises": {pack["id"]: pack["reader_promise"] for pack in packs}},
+                "base_context": packs, "source_trace": trace,
+                "override_policy": {"locked": ["route.primary_genre", "route.secondary_genres", "master_constraints.writing_profile"], "append_only": ["anti_patterns"], "override_allowed": []},
+            },
+            "chapter_brief": {
+                "meta": {"schema_version": "story-system/v1", "contract_type": "CHAPTER_BRIEF", "generator_version": "writing-profile/v1", "chapter": chapter},
+                "override_allowed": {"chapter_focus": self._suggest_chapter_focus(query, directive)},
+                "chapter_directive": directive, "dynamic_context": packs,
+                "language_rules": bundles["language_rules"], "source_trace": trace,
+            } if chapter is not None else None,
+            "anti_patterns": [],
+        }
+        self._attach_profile(result)
+        return result
 
     def _route(self, query: str, genre: Optional[str]) -> Dict[str, Any]:
         route_rows = self._load_csv_rows("题材与调性推理")
@@ -240,6 +308,7 @@ class StorySystemEngine:
                 table=table_name,
                 genre=genre or None,
                 max_results=top_k,
+                market=self.writing_profile.market if self.writing_profile else "domestic",
             )
             raw_rows = {str(row.get("编号") or ""): row for row in self._load_csv_rows(table_name)}
             for item in result.get("data", {}).get("results", []):
@@ -299,7 +368,7 @@ class StorySystemEngine:
         if not csv_path.is_file():
             return []
         with csv_path.open("r", encoding="utf-8-sig", newline="") as f:
-            return list(csv.DictReader(f))
+            return [row for row in csv.DictReader(f) if market_matches(row, self.writing_profile.market if self.writing_profile else "domestic")]
 
     def _normalize_text(self, text: str) -> str:
         return str(text or "").strip().lower()

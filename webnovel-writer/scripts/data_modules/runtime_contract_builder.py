@@ -9,6 +9,9 @@ from chapter_outline_loader import load_chapter_plot_structure, volume_num_for_c
 
 from .story_contract_schema import MasterSetting, ReviewContract, VolumeBrief
 from .story_contracts import read_json_if_exists
+from .profile_contracts import contract_profile_errors
+from .writing_profile import load_writing_profile, load_rule_bundles
+from .editorial_guidance import build_editorial_guidance
 
 
 class RuntimeContractBuilder:
@@ -20,28 +23,39 @@ class RuntimeContractBuilder:
         anti_patterns = self._load_anti_patterns()
         plot = self._load_plot_structure(chapter)
         volume = self._resolve_volume(chapter)
+        profile = load_writing_profile(self.project_root)
+        errors = contract_profile_errors(self.project_root, {"master": master.model_dump()})
+        if errors:
+            raise ValueError("; ".join(errors))
+        bundles = load_rule_bundles(profile) if not profile.reference().get("legacy") else {}
+        editorial = build_editorial_guidance(profile, bundles) if bundles else {}
+        inherited_meta = master.meta.model_dump(exclude={"contract_type"})
 
         volume_brief = VolumeBrief.model_validate(
             {
-                "meta": {"schema_version": "story-system/v1", "contract_type": "VOLUME_BRIEF"},
+                "meta": {**inherited_meta, "contract_type": "VOLUME_BRIEF"},
                 "volume_goal": {"summary": f"第{volume}卷延续 {master.route.get('primary_genre', '')} 的主冲突"},
-                "selected_tropes": [master.route.get("primary_genre", "")],
+                "selected_tropes": [master.route.get("primary_genre", ""), *(master.route.get("secondary_genres") or [])],
                 "selected_pacing": {"wave": master.master_constraints.get("pacing_strategy", "")},
                 "selected_scenes": list(plot.get("cpns") or []),
                 "anti_patterns": [row.get("text", "") for row in anti_patterns if row.get("text")],
                 "system_constraints": [master.master_constraints.get("core_tone", "")] if master.master_constraints.get("core_tone") else [],
+                "editorial_guidance": editorial,
                 "overrides": {"locked": {}, "append_only": {}, "override_allowed": {}},
             }
         ).model_dump()
         review_contract = ReviewContract.model_validate(
             {
-                "meta": {"schema_version": "story-system/v1", "contract_type": "REVIEW_CONTRACT"},
+                "meta": {**inherited_meta, "contract_type": "REVIEW_CONTRACT", "chapter": chapter},
                 "must_check": list(plot.get("mandatory_nodes") or []),
                 "blocking_rules": list(plot.get("prohibitions") or []),
                 "genre_specific_risks": [master.route.get("primary_genre", "")] if master.route.get("primary_genre") else [],
                 "anti_patterns": volume_brief["anti_patterns"],
                 "system_constraints": volume_brief["system_constraints"],
                 "review_thresholds": {"blocking_count": 0, "missed_nodes": 0},
+                "language_advisory": bundles.get("language_rules") or {},
+                "editorial_guidance": editorial,
+                "aesthetics_advisory": [{"genre": pack["id"], "review_focus": pack.get("review_focus", {})} for pack in bundles.get("genre_rules") or []],
                 "overrides": {"locked": {}, "append_only": {}, "override_allowed": {}},
             }
         ).model_dump()

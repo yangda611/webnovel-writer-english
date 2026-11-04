@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 from .placeholder_scanner import scan_placeholders
+from .profile_contracts import contract_profile_errors
 
 
 class PrewriteValidator:
@@ -35,6 +36,12 @@ class PrewriteValidator:
                 if not story_contract.get(name)
             ]
         blocking_reasons = []
+        profile_errors = contract_profile_errors(self.project_root, {
+            name: story_contract.get(name) or {}
+            for name in ("master_setting", "chapter_brief", "volume_brief", "review_contract")
+        }, state=state)
+        if profile_errors:
+            blocking_reasons.append("WritingProfile 配置或合同引用失效: " + "; ".join(profile_errors))
         if pending:
             blocking_reasons.append("存在高优先级 disambiguation_pending")
         if missing_contracts:
@@ -46,7 +53,8 @@ class PrewriteValidator:
             blocking_reasons.append("当前章节相关设定存在未补齐占位")
         return {
             "chapter": chapter,
-            "blocking": bool(pending) or bool(missing_contracts) or bool(related_placeholders),
+            "blocking": bool(pending) or bool(missing_contracts) or bool(related_placeholders) or bool(profile_errors),
+            "writing_profile_errors": profile_errors,
             "blocking_reasons": blocking_reasons,
             "missing_contracts": missing_contracts,
             "related_placeholders": related_placeholders,

@@ -1,5 +1,7 @@
 # 排版与阅读体验（移动端优先）
 
+> 适用边界：先通过 `scripts/writing_profile.py --project-root <项目> --bundles` 验证 `.story-system/WRITING_PROFILE.json`。下文行数、对白频率及中文移动端偏好仅用于国内兼容链。国外用 `../../../../references/writing-rules/README.md` 与对应 `zh/en` 语言包，按项目或出版社样式排版，不用中文行数和标点阈值决定英文句段。排版建议不产生事实 blocking。
+
 > **目的**：让读者“滑着读”更顺（手机屏幕），避免因为段落/对话/标点问题造成弃读。
 
 ---

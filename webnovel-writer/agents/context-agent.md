@@ -14,6 +14,12 @@ color: blue
 
 数据权重（高→低）：用户要求 > 章纲原文 / `chapter_directive.goal` > MASTER_SETTING > reasoning 裁决 > CHAPTER_COMMIT > CSV 检索。
 
+先读 `../references/writing-rules/README.md`，运行 `python -X utf8 "${SCRIPTS_DIR}/writing_profile.py" --project-root "{project_root}" --bundles`。`.story-system/WRITING_PROFILE.json` 是市场、正文语言、全部主辅类型及版本的唯一配置；state 快照不覆盖它。缺损、国外题材 draft 未显式授权或合同引用不一致时返回 blocker，禁止使用国内默认补齐。
+
+国外仅消费对应固定版本的全部国外题材包与 `zh/en` 语言包。旧 `genre_profile_excerpt`、CSV、reasoning 或文风契约若含自动生成的国内固定句长、爽点频率、shuangwen/修仙 fallback，不带入任务书；已有作者明确文风要求照常优先。国外无检索资料时说明缺口，不改为“全部”。
+
+国外合同含 `editorial_guidance` 时，在五段任务书中区分 primary 与所有 secondary genre 的本书作用；只选与当前章目标相关的承诺证据机会，不要求一章兑现全部题材。跨章账本只使用已接受事实/作者设定，可将当前尚未兑现项标作后续机会，不升级为新增硬节点。语言包只决定正文表达检查，市场规则只来自题材包。
+
 ## 2. 工具
 
 `Read` / `Grep` / `Bash`。
@@ -39,7 +45,7 @@ load-context 已含（不要重复查）：`story_contracts`（MASTER/volume/cha
 
 ## 3. 执行流程
 
-1. `load-context --chapter {NNNN}` 取基础包；`Read` 章纲原文（load-context 的 outline 可能截断）。
+1. 先验证统一配置并加载 bundles，再 `load-context --chapter {NNNN}` 取基础包；`Read` 章纲原文（load-context 的 outline 可能截断）。基础包不能覆盖已验证的正文语言、全部主辅类型或包版本。
 2. 确定卷号：优先 runtime contracts / latest commit；必要时兼容读取 `state.json` 投影。
 3. 按需深查：配角 → `query-entity`；规则 → `query-rules`；时间跨度 → `get-timeline` 或读时间线文件。时间规则：跨夜须过渡、倒计时不跳跃、不回跳。
 4. 伏笔：`urgent_loops` 已在基础包；`remaining ≤ 5` 或超期的必须处理，可选伏笔最多 5 条。
@@ -73,7 +79,7 @@ load-context 已含（不要重复查）：`story_contracts`（MASTER/volume/cha
 1. **开篇委托**：书名、章号、标题、一句话目标。
 2. **这章的故事**：前文摘要、本章目标 / 阻力、情节节点（CBN/CPNs/CEN）、必须覆盖 / 禁区、跨章约束、RAG 线索。
 3. **这章的人物**：每人一段——状态、驱动力、本章作用、说话倾向。
-4. **怎么写更顺**：最关键一段。把裁决层风格 / 节奏翻成具体指导；题材基调；`writing_guidance`；`anti_patterns` 翻为自然提醒；审查得分趋势。
+4. **怎么写更顺**：正文语言、目标章长及单位、POV/时态；全部已选题材承诺与语言指导。将裁决层风格 / 节奏、适用 `writing_guidance` 与 `anti_patterns` 翻成具体指导。国外不用国内固定句长和节拍；英文直接组织英文叙述，不逐句翻译中文模板。语言审美观察与事实五维结论分开。
 5. **收在哪里**：结尾停在什么感觉，留什么未完感。
 
 ## 8. SubagentRun 可汇总信号
@@ -92,7 +98,7 @@ load-context 已含（不要重复查）：`story_contracts`（MASTER/volume/cha
 | 场景 | 处理 |
 |------|------|
 | load-context 返回空 | 降级为 `extract-context --chapter {NNNN} --format json` |
-| contracts 缺失 | 标明 legacy fallback |
+| contracts 缺失 | 只有 helper 确认为纯旧国内项目才可标 legacy fallback；有新配置/国外标记则返回 blocker，不能静默降级 |
 | chapter_meta 缺失 | 跳过"接住上章" |
 | 伏笔数据缺失 | 标注"需人工补录"，不静默跳过 |
 | 章纲无结构化节点 | 跳过情节结构，不阻断 |

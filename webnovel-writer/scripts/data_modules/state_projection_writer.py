@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -11,11 +10,9 @@ import filelock
 
 from .commit_artifacts import entity_delta_metadata, extraction_dict, extraction_list, extraction_text
 from .story_contracts import read_json_if_exists
-
-try:
-    from chapter_paths import find_chapter_file
-except ImportError:  # pragma: no cover
-    from scripts.chapter_paths import find_chapter_file
+from .text_metrics import chapter_measurement
+from .writing_profile import load_writing_profile
+from .state_validator import get_chapter_meta_entry
 
 try:
     from security_utils import atomic_write_json
@@ -68,6 +65,7 @@ class StateProjectionWriter:
             return {"applied": False, "writer": "state", "reason": f"unknown_status:{status}"}
 
         with self._locked_state() as state:
+            profile = load_writing_profile(self.project_root, state=state)
             entity_state = state.setdefault("entity_state", {})
             progress = state.setdefault("progress", {})
             chapter_status = progress.setdefault("chapter_status", {})
@@ -95,11 +93,29 @@ class StateProjectionWriter:
                 chapter_status[str(chapter)] = "chapter_committed"
                 progress["current_chapter"] = max(old_current, chapter)
 
-                projected_total = self._project_total_words(chapter_status)
-                if projected_total > 0:
+                # Only the incoming accepted chapter is remeasured. Other body
+                # files may contain unaccepted edits and cannot alter progress.
+                imported_count = self._safe_int(
+                    extraction_dict(commit_payload, "chapter_meta").get("word_count")
+                    or commit_payload.get("word_count")
+                )
+                measurement = chapter_measurement(self.project_root, chapter, state=state,
+                                                  incoming_count=imported_count)
+                chapter_meta = state.get("chapter_meta")
+                if not isinstance(chapter_meta, dict):
+                    chapter_meta = {}
+                    state["chapter_meta"] = chapter_meta
+                chapter_meta[f"{chapter:04d}"] = {
+                    **get_chapter_meta_entry(state, chapter), **measurement,
+                    "accepted_measurement": dict(measurement),
+                }
+
+                projected_total = self._project_total_words(chapter_status, state=state)
+                if projected_total > 0 or not profile.reference().get("legacy"):
                     progress["total_words"] = projected_total
                 else:
                     progress["total_words"] = old_total
+                progress["count_unit"] = profile.chapter_unit
 
                 if (
                     old_status != "chapter_committed"
@@ -404,28 +420,45 @@ class StateProjectionWriter:
         strand = str(raw or "").strip().lower()
         return strand if strand in {"quest", "fire", "constellation"} else ""
 
-    def _project_total_words(self, chapter_status: dict) -> int:
+    def _project_total_words(self, chapter_status: dict, *, state: dict | None = None) -> int:
+        state = state or {}
+        profile = load_writing_profile(self.project_root, state=state)
         total = 0
+        seen: set[int] = set()
         for raw_chapter, raw_status in chapter_status.items():
             if raw_status != "chapter_committed":
                 continue
             chapter = self._safe_int(raw_chapter)
-            if chapter <= 0:
+            if chapter <= 0 or chapter in seen:
                 continue
-            chapter_file = find_chapter_file(self.project_root, chapter)
-            if chapter_file is None:
-                continue
-            try:
-                total += self._count_chapter_words(chapter_file.read_text(encoding="utf-8"))
-            except OSError:
-                continue
-        return total
+            seen.add(chapter)
+            entry = get_chapter_meta_entry(state, chapter)
+            metadata = entry.get("accepted_measurement")
+            if not isinstance(metadata, dict):
+                metadata = {}
+            if "word_count" not in metadata or metadata.get("count_unit", "characters") != profile.chapter_unit:
+                accepted = read_json_if_exists(
+                    self.project_root / ".story-system" / "commits" / f"chapter_{chapter:03d}.commit.json"
+                ) or {}
+                if accepted.get("meta", {}).get("status") == "accepted":
+                    metadata = extraction_dict(accepted, "chapter_meta")
+            if "word_count" not in metadata or metadata.get("count_unit", "characters") != profile.chapter_unit:
+                # Older accepted projections may predate state/commit counters.
+                # Recover their projected index value, never an edited body file.
+                from .config import DataModulesConfig
+                from .index_manager import IndexManager
 
-    def _count_chapter_words(self, content: str) -> int:
-        text = re.sub(r"```[\s\S]*?```", "", content)
-        text = re.sub(r"^#+ .*$", "", text, flags=re.MULTILINE)
-        text = re.sub(r"---", "", text)
-        return len(text.strip())
+                config = DataModulesConfig.from_project_root(self.project_root)
+                if config.index_db.is_file():
+                    metadata = IndexManager(config).get_chapter(chapter) or {}
+            if "word_count" not in metadata:
+                if not profile.reference().get("legacy"):
+                    raise ValueError(f"第{chapter}章缺少已验收计量，需恢复 accepted commit 或索引")
+                continue
+            if metadata.get("count_unit", "characters") != profile.chapter_unit:
+                raise ValueError(f"第{chapter}章已验收计量单位与写作配置不匹配")
+            total += max(0, self._safe_int(metadata["word_count"]))
+        return total
 
     def _safe_int(self, value: object) -> int:
         try:

@@ -25,6 +25,8 @@ export PROJECT_ROOT="$(python "${SCRIPTS_DIR}/webnovel.py" --project-root "${WOR
 
 ## 查询分类 → 最窄工具
 
+先读 `../../references/writing-rules/README.md`，用 `python -X utf8 "${SCRIPTS_DIR}/writing_profile.py" --project-root "${PROJECT_ROOT}" --bundles` 验证 `.story-system/WRITING_PROFILE.json` 配置。市场与正文语言独立，完整保留主类型和全部辅类型；管理答复中文，引用英文正文时保留原文。新配置缺损时不从 state 猜国内默认。
+
 先识别查询类型，再用下表最窄工具。不默认全量加载，只在综合 / 跨多类型查询时用 `memory-contract load-context`。
 
 | 查询类型 | 关键词 | 最窄工具 |
@@ -44,7 +46,8 @@ export PROJECT_ROOT="$(python "${SCRIPTS_DIR}/webnovel.py" --project-root "${WOR
 |---------|-----------|---------|
 | 数据流 / 优先级 | 数据流规范 | `${SKILL_ROOT}/references/system-data-flow.md` |
 | 伏笔分析 | 伏笔分析 | `${SKILL_ROOT}/references/advanced/foreshadowing.md` |
-| 节奏分析 | Strand 模式 | `${SKILL_ROOT}/../../references/shared/strand-weave-pattern.md` |
+| 国内节奏分析 | Strand 模式 | `${SKILL_ROOT}/../../references/shared/strand-weave-pattern.md` |
+| 国外节奏/语言分析 | 全部题材包与正文语言包 | helper 返回的固定版本 bundles；不加载国内字数窗口或爽点配额 |
 | 格式查询 | 标签规范 | `${SKILL_ROOT}/references/tag-specification.md` |
 
 不得同时加载两个以上 reference，除非用户请求明确跨多类型。
@@ -66,6 +69,8 @@ export PROJECT_ROOT="$(python "${SCRIPTS_DIR}/webnovel.py" --project-root "${WOR
    - 投影层（5-6）：从写后真源自动生成的"查询视图"，方便快速检索
 
 3. **调用最窄工具检索**：按类型只调用所需命令，不默认全量 `load-context`。
+
+创作参考 CSV 查询须传 `reference_search.py --project-root "${PROJECT_ROOT}"`，先按 market 与 shared 人工审阅标记隔离，再按类型查询。国外无匹配时报告无资料，不退回“全部”、国内命名或修仙库；事实查询仍以项目 canon 与 accepted commits 为准。语言或审美观察单独标为建议，不制造事实 blocking。
 
 ```bash
 # 角色历史状态：某实体在指定章节时的状态

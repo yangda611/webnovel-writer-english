@@ -1,7 +1,9 @@
 ## 定位
+适用边界：本文固定章长、中文拆句和节奏指标仅用于国内兼容链。先用 `scripts/writing_profile.py --project-root <项目> --bundles` 验证 `.story-system/WRITING_PROFILE.json`；国外项目读取 `../../../references/writing-rules/README.md`、全部已选国外题材包及对应 `zh/en` 语言包，不执行下文国内句长、字数窗口或 said 标签比例。语言建议独立记录，不自动事实 blocking。
+
 Step 4 风格适配参考，将正文改写为网文风格并消除 AI 痕迹。
 
-**中文优先原则**：本步骤的改写说明、改写日志、变更摘要一律使用简体中文表述。英文仅保留在 CLI flag、checker id、JSON 键名等不可改的机器标识上。
+**管理语言原则**：改写说明、改写日志、变更摘要一律使用简体中文；正文语言以配置为准，英文正文及引用不得被管理语言规则改写成中文。CLI flag、checker id、JSON 键名等机器标识保持原样。
 
 **职责**：风格转换 + AI 痕迹消除 —— 句式改写、抽象→具体、网文口感、万能副词/神态模板替换。
 

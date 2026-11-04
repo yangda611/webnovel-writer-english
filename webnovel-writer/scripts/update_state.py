@@ -63,6 +63,7 @@ from data_modules.state_validator import (
     normalize_foreshadowing_status,
     normalize_state_runtime_sections,
 )
+from data_modules.writing_profile import load_writing_profile
 
 # Windows 编码兼容性修复
 if sys.platform == "win32":
@@ -304,10 +305,13 @@ class StateUpdater:
 
     def update_progress(self, current_chapter: int, total_words: int):
         """更新创作进度"""
+        profile = load_writing_profile(Path(self.state_file).resolve().parent.parent, state=self.state)
+        unit = "词" if profile.chapter_unit == "words" else "字"
         self.state["progress"]["current_chapter"] = current_chapter
         self.state["progress"]["total_words"] = total_words
+        self.state["progress"]["count_unit"] = profile.chapter_unit
         self.state["progress"]["last_updated"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        print(f"📝 更新进度: 第{current_chapter}章, 总字数: {total_words}")
+        print(f"📝 更新进度: 第{current_chapter}章, 总{unit}数: {total_words} {unit}")
 
     def mark_volume_planned(self, volume: int, chapters_range: str):
         """标记卷已规划"""

@@ -190,6 +190,10 @@ def _build_preflight_report(explicit_project_root: Optional[str]) -> dict:
         project_root = str(resolved_root)
         checks.append({"name": "project_root", "ok": True, "path": project_root})
         story_runtime = build_story_runtime_health(resolved_root)
+        profile_errors = story_runtime.get("writing_profile_errors") or []
+        checks.append({"name": "writing_profile_contracts", "ok": not profile_errors,
+                       "path": str(resolved_root / ".story-system" / "WRITING_PROFILE.json"),
+                       "error": "; ".join(profile_errors)})
     except FileNotFoundError as exc:
         project_root_error = _project_root_diagnostic(explicit_project_root, exc)
         checks.append(

@@ -5,6 +5,8 @@ purpose: Step 2 起草时加载，在写作阶段预防 AI 癖好
 
 # Anti-AI 写作指南
 
+> 适用边界：本文固定句式、字数、词频和节奏默认仅用于国内兼容链。先验证 `.story-system/WRITING_PROFILE.json` 并通过 `scripts/writing_profile.py --project-root <项目> --bundles` 加载规则。国外项目不读下文国内固定规则，改用 `../../../references/writing-rules/README.md` 与对应题材/语言包作具体编辑；语言审美观察只作独立建议，不推断 AI 率或自动事实阻断。
+
 > 核心理念：写的时候就写对，比写完再改好。
 > 加载时机：Step 2 起草正文前。
 

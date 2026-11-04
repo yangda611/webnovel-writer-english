@@ -66,7 +66,20 @@ def retry_projection(project_root: str | Path, *, chapter: int) -> dict[str, Any
             "latest_projection_run": None,
         }
 
-    projected = ChapterCommitService(root).apply_projection_writers(payload)
+    try:
+        projected = ChapterCommitService(root).apply_projection_writers(payload)
+    except (ValueError, OSError) as exc:
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "action": "retry",
+            "ok": False,
+            "project_root": str(root),
+            "chapter": chapter,
+            "error": f"projection_precondition:{exc}",
+            "commit_path": str(path),
+            "projection_status": dict(payload.get("projection_status") or {}),
+            "latest_projection_run": None,
+        }
     latest_run = latest_projection_run(root, chapter=chapter)
     return {
         "schema_version": SCHEMA_VERSION,

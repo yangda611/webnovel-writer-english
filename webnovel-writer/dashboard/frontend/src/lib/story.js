@@ -3,6 +3,13 @@ function parseChapter(value) {
     return Number.isFinite(number) && number > 0 ? number : null
 }
 
+export function countLabels(source) {
+    const unit = typeof source === 'string'
+        ? source
+        : source?.count_unit || source?.progress?.count_unit || source?.writing_profile?.chapter_unit
+    return unit === 'words' ? { unit: '词', name: '词数' } : { unit: '字', name: '字数' }
+}
+
 function parseRange(value) {
     const text = String(value || '').trim()
     if (!text.includes('-')) return null

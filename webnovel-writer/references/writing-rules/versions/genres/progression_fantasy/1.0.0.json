@@ -1,0 +1,46 @@
+{
+  "id": "progression_fantasy",
+  "version": "1.0.0",
+  "status": "draft",
+  "market": "overseas",
+  "name": "成长奇幻（Progression Fantasy）",
+  "reader_promise": "主角能力的学习、练习与发展构成主要阅读回报；成长改变其可做的选择，并在关键处得到可辨认的兑现。",
+  "scope": {
+    "includes": ["有持续能力成长主线的奇幻", "训练、试验、受挫和应用之间的因果", "数值化或非数值化的成长"],
+    "not_required": ["游戏界面", "等级数字", "修仙境界", "每章升级", "固定开篇和高潮字数"],
+    "boundaries": "使用 Andrew Rowe 的作者定义作为起点，不声称该定义覆盖所有作者或平台。仅有一次能力觉醒不足以证明成长是全书中心。",
+    "evidence_status": "已读定义性一手资料；下列提问、流程和原创示例是本项目的编辑方案，尚未经过目标读者、平台或长篇样章验证。"
+  },
+  "init_questions": [
+    "主角最初不能完成什么，读者将通过什么具体结果辨认成长？",
+    "成长依赖训练、知识、资源、合作还是其他条件？谁控制这些条件？",
+    "能力的上限、代价与失败后果是什么？如何避免临场增加新能力解围？",
+    "主角为什么愿意承担成长的代价？成长会损害哪段关系或价值？",
+    "若有辅题材，其承诺如何与成长主线相互影响？请保留全部辅题材。"
+  ],
+  "outline_guidance": [
+    "为卷记录初始能力、目标任务、障碍、获得新方法的过程及应用结果；用可观察的差异验证成长。",
+    "把练习或失败中的信息带入后续选择，避免训练场景与真正冲突互不相干。",
+    "安排资源、时间、伦理或关系上的取舍；具体强度由故事决定，不设置每章固定兑现次数。",
+    "让新能力解决已铺垫的一部分问题，同时保留已建立的限制；卷末不必机械升阶。",
+    "主辅题材分别列出读者承诺与冲突点，不把所有辅题材改写成升级奖励。"
+  ],
+  "writing_guidance": [
+    "从角色当下尝试写出成长：他如何判断、哪里做错、改变了什么方法。",
+    "说明能力时优先提供足够理解当前选择的信息；术语密度与叙述距离随正文语言和人物调整。",
+    "让读者看到胜利与代价之间的联系；既有能力的巧用可以构成兑现，无需反复增加新技能。",
+    "POV、时态、章长和计量单位读取项目配置；不用中文句长或国内爽点间距套用英文。"
+  ],
+  "review_focus": {
+    "fact_checks": ["能力的获得与使用是否有已建立依据", "训练、消耗和恢复时间是否自洽", "当前结果是否突破既有能力限制而无解释"],
+    "advisory_checks": ["成长是否改变选择与局势", "练习是否具有角色动机", "读者能否辨认本次变化而不依赖重复说明"],
+    "advisory_policy": "审美与题材承诺建议单独记录，不新增事实 reviewer 维度，不自动产生 blocking。"
+  },
+  "examples": [
+    {"language": "zh", "text": "第三次试桥时，伊蕾没有增加符火。她把火线移到裂缝两侧，等桥面停止颤动，才松开一根手指。桥只多撑了两息；这一次，车上的孩子已经过去。", "commentary": "原创演示：能力变化通过不同方法和具体结果呈现；两息并非通用升级单位。"},
+    {"language": "en", "text": "On the third attempt, Ilyra fed no more heat into the seam. She spread it along both edges instead. The bridge held long enough for the cart to pass, and the burn climbed another inch up her wrist.", "commentary": "原创英文表达示例：观察、应用与代价相连；不是译自国内模板。"}
+  ],
+  "sources": [
+    {"url": "https://andrewkrowe.wordpress.com/2019/02/26/progression-fantasy-a-new-subgenre-concept/", "title": "Progression Fantasy: A New Subgenre Concept", "publisher_or_author": "Andrew Rowe（作者本人博客）", "accessed_on": "2026-11-03", "read_scope": "实际打开并读取文章正文，重点为定义、训练与能力发展、可量化但非必须的成长、与 LitRPG 的区别及作者声明的非排他边界。", "limits": "作者提出的分类观点，不是平台标准；没有据此验证本项目生成质量。"}
+  ]
+}

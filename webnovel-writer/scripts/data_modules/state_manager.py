@@ -28,6 +28,7 @@ import filelock
 
 from .config import get_config
 from .observability import safe_append_perf_timing, safe_log_tool_call
+from .writing_profile import load_writing_profile
 
 
 logger = logging.getLogger(__name__)
@@ -214,6 +215,7 @@ class StateManager:
             state["progress"] = progress
         progress.setdefault("current_chapter", 0)
         progress.setdefault("total_words", 0)
+        progress["count_unit"] = load_writing_profile(self.config.project_root, state=state).chapter_unit
         progress.setdefault("last_updated", self._now_progress_timestamp())
 
         return state

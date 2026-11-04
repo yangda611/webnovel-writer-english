@@ -1,0 +1,173 @@
+{
+  "id": "romantasy",
+  "version": "1.1.0",
+  "status": "draft",
+  "market": "overseas",
+  "name": "爱情奇幻（Romantasy）",
+  "reader_promise": "奇幻世界与关键爱情关系共同驱动故事；角色的感情选择影响奇幻冲突，奇幻条件也改变关系能够如何发展。",
+  "scope": {
+    "includes": [
+      "爱情与奇幻相互作用的核心叙事",
+      "幻想冲突中的信任、欲望、边界和关系选择"
+    ],
+    "not_required": [
+      "固定男女主组合",
+      "固定亲密描写尺度",
+      "敌对到相爱",
+      "命定伴侣",
+      "统一人称或时态"
+    ],
+    "boundaries": "出版社与 SFWA 页面显示这一名称覆盖不同爱情/奇幻权重。必须向作者明确结局承诺：若作为类型 Romance 销售，应明确其幸福结局或阶段性幸福结局期待；若是悲剧性奇幻爱情，不默许同样标签带来的结局期待。",
+    "evidence_status": "已读定义和类型讨论，未证实具体平台对 HEA/HFN、尺度、年龄或营销标签的要求；不根据本包擅自宣称符合。"
+  },
+  "init_questions": [
+    "爱情线与奇幻线分别是什么核心冲突？删去任一条，另一条还会如何变化？",
+    "目标结局是 HEA、HFN、系列中途未决还是悲剧？作品将怎样向读者表明承诺？",
+    "双方各自想要什么，什么价值、责任或权力差异使亲近有代价？",
+    "视角数量、年龄定位、亲密描写尺度和内容边界是什么？",
+    "魔法、契约、阶级或命定机制如何影响自主选择？故事如何呈现同意与拒绝？"
+  ],
+  "outline_guidance": [
+    "并列规划外部冲突与关系变化，并标出二者互相改变决定的节点。",
+    "信任与亲近应来自有后果的行动；误解解除后仍应存在具体的价值或处境冲突。",
+    "让双方保有关系之外的目标、关系网络与拒绝能力；权力差异须在场景中得到处理。",
+    "结尾兑现已选的关系承诺；系列中途的未决状态应明确，不用假定所有读者接受同一种悬念。",
+    "关系阶段与奇幻危机的安排依据本书人物和章型，不使用固定几章亲吻或固定字数情绪脉冲。"
+  ],
+  "writing_guidance": [
+    "用互相观察、试探、行动与选择呈现吸引力；避免只依赖外貌清单或反复宣告心动。",
+    "亲密场景的描写距离和细节服从所选尺度、POV 和人物经验，不自动提高露骨程度。",
+    "让奇幻要素实际影响关系，例如一道禁令如何改变见面方式，而非只用异世界名词装饰。",
+    "误解、沉默和冲突应能由已有动机解释；语言润色不得擅自改变关系事实或同意边界。"
+  ],
+  "review_focus": {
+    "fact_checks": [
+      "关系状态、承诺与既有事件是否一致",
+      "魔法或契约规则是否自洽",
+      "角色是否知道其尚未获知的情感或世界信息"
+    ],
+    "advisory_checks": [
+      "爱情与奇幻是否互相影响",
+      "吸引与信任变化是否有具体行动支持",
+      "自主性、权力差和结局承诺是否清楚"
+    ],
+    "advisory_policy": "化学反应、情绪强弱和结局偏好单独建议；既有五维事实 reviewer 不增加恋爱评分或自动审美阻断。"
+  },
+  "examples": [
+    {
+      "language": "zh",
+      "text": "诺娅把解咒刀转过来，刀柄朝向他。‘拿着。你可以自己割断誓约。’\n埃文没有接。窗外的结界正在裂开，他却先问：‘割断以后，你还愿意让我留下吗？’\n‘我还不知道。’她松了松握刀的手。‘所以我才把它给你。’",
+      "commentary": "原创演示：魔法契约与自主选择直接影响关系，场景未宣称已兑现全书结局。"
+    },
+    {
+      "language": "en",
+      "text": "Noa offered him the knife hilt first. ‘You can cut the oath yourself.’\nBeyond the window, the ward began to split. Evan kept his hands at his sides. ‘And afterward?’\n‘I don't know.’ Her grip eased. ‘That's why you need the knife.’",
+      "commentary": "原创演示：对白与魔法动作共同呈现关系风险；引号形式可由语言包调整。"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.penguin.co.uk/discover/articles/romantasy-guide",
+      "title": "What is Romantasy? A Beginner’s Guide to the Genre",
+      "publisher_or_author": "Penguin Books UK",
+      "accessed_on": "2026-11-03",
+      "read_scope": "实际打开出版社页面，读取其浪漫与奇幻结合的定义、读者入口和作品类别说明；未将推荐列表当作销售数据。",
+      "limits": "出版社面向读者的指南，不能证明一种权重、套路或尺度适用于所有平台。"
+    },
+    {
+      "url": "https://sfwa.org/2025/02/25/romantasy-an-old-genre-with-a-new-name/",
+      "title": "Romantasy: An Old Genre with a New Name",
+      "publisher_or_author": "SFWA（Science Fiction and Fantasy Writers Association）",
+      "accessed_on": "2026-11-03",
+      "read_scope": "实际通过 web 和本地 HTTP 读取正文，重点为爱情和奇幻均不可移除的叙事、类型历史与结尾的幸福期待；本文未给出 HEA/HFN 缩写定义。",
+      "limits": "行业组织发表的类型讨论，不是所有出版合同、平台或读者共同签署的标准。"
+    },
+    {
+      "url": "https://www.rwa.org/proof-of-serious-pursuit",
+      "title": "Proof of Serious Pursuit",
+      "publisher_or_author": "Romance Writers of America",
+      "accessed_on": "2026-11-03",
+      "read_scope": "实际打开页面并读取正文脚注中对 Romance fiction 的定义：核心爱情故事，以及情感满足且乐观的关系结局。",
+      "limits": "会员资格页面上的类型定义，只用于说明 Romance 标签的结局期待，不推断本项目符合该组织资格或任何投稿条件。"
+    }
+  ],
+  "revision_notes": {
+    "previous_version": "1.0.0",
+    "evidence_basis": "1.1.0 新增内容是本项目编辑方案，依照已读来源的类型边界设计；不是来源原文、统一行业规则或已验证的读者偏好。连续样章和模型交叉审稿只提供有限案例证据。",
+    "validation_record": "docs/research/overseas-quality-round2/README.md"
+  },
+  "editorial_framework": {
+    "evidence_basis": "1.1.0 新增内容是本项目编辑方案，依照已读来源的类型边界设计；不是来源原文、统一行业规则或已验证的读者偏好。连续样章和模型交叉审稿只提供有限案例证据。",
+    "primary_application": "把关系发展与奇幻冲突同时放在故事中心。记录双方各自目标、拒绝权和信任依据；让感情选择改变外部解法，让魔法、制度或危险反过来检验关系。按项目已选的结局承诺规划，不擅自替作者选择尺度或配对。",
+    "secondary_application": "保留对主线有实际影响的爱情支线和人物自主性，明确读者会得到多少关系发展、什么结局期待。若爱情仅为轻微点缀，应提示作者审视标签，而非自动把整本书改成 Romance。",
+    "promise_horizon": [
+      {
+        "horizon": "场景",
+        "question": "这次接近或拒绝依据什么观察与行动？",
+        "evidence": "具体的注意、试探、合作或选择；外貌吸引可以存在，不能单独证明信任已建立。"
+      },
+      {
+        "horizon": "跨章",
+        "question": "前章选择改变了哪项信任、边界或共同风险？",
+        "evidence": "后章保留后果；角色仍有自己的目标，不因一次帮助消除长期创伤或结构性权力差。"
+      },
+      {
+        "horizon": "卷与全书",
+        "question": "关系与外部冲突如何共同走向已承诺的结局？",
+        "evidence": "标出互相改变决定的节点；开篇两章不能作为全书 HEA/HFN 已兑现的证据。"
+      }
+    ],
+    "continuity_ledger": [
+      {
+        "field": "双方目标",
+        "record": "各自想得到或保护什么、责任、替代选项以及拒绝合作的能力。",
+        "carryover_check": "是否为了撮合，突然消除对方独立目标或正当顾虑？"
+      },
+      {
+        "field": "关系与信任",
+        "record": "观察到的行动、当事人解释、尚未知的动机、已作承诺和仍在的疑虑。",
+        "carryover_check": "区分吸引、信任、同意和依赖；后章关系状态不能凭旁白跳级。"
+      },
+      {
+        "field": "奇幻规则与权力",
+        "record": "契约、魔法、阶层或命定条件对谁施加何种成本，能否退出。",
+        "carryover_check": "是否临时增加魔法例外促成亲密，或把被迫服从误说成自由同意？"
+      },
+      {
+        "field": "双线后果",
+        "record": "感情决定怎样改变外部问题，外部变化怎样增加或减少关系风险。",
+        "carryover_check": "若删去一条线，另一条的行动是否几乎不变？两章未到重大变化时标记具体铺垫。"
+      }
+    ],
+    "scene_checks": [
+      {
+        "question": "信任的变化可指向哪一个有成本的行动？",
+        "evidence": "引用该动作及后续反应；仍然保留未解决顾虑，避免把善举等同全盘信任。"
+      },
+      {
+        "question": "奇幻条件是否只换了背景名词？",
+        "evidence": "找出规则怎样限制见面、合作、拒绝或未来；不强制每次互动都有魔法。"
+      },
+      {
+        "question": "感情选择是否真的改变了外部解决办法？",
+        "evidence": "指出选择前后的可行选项、责任或成本差异，而非只报告心跳。"
+      }
+    ],
+    "contrast_cases": [
+      {
+        "language": "en",
+        "weak": "He had saved her shop. She knew she could trust him with anything.",
+        "revision": "He slid the warrant under the door before she opened it. Without it, his claim to the heat line would fail. Mara read his name twice, then unfastened one chain. She left the other hooked.",
+        "reason": "用交出实际权力显示风险，以有限行动回应；并不声称一次好事治愈所有戒心。",
+        "limits": "原创场景示范，权力机制仍须正文解释，不强制慢热或敌对开局。"
+      },
+      {
+        "language": "zh",
+        "weak": "魔法考验结束后，她终于明白他是值得依靠的人。",
+        "revision": "她把可以撤回担保的印记留在他手里，没有替他按下去。他先问清店铺会损失多少热量，才把自己的名字写上去。",
+        "reason": "双方各有信息与选择，关系动作参与奇幻成本的分配；后续仍需呈现影响。",
+        "limits": "原创中文对照，不规定承诺必须经由契约表达。"
+      }
+    ]
+  }
+}

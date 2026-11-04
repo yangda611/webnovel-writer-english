@@ -12,6 +12,13 @@ class ContractMeta(BaseModel):
     contract_type: str
     generator_version: str = "phase2"
     source_trace: List[Dict[str, Any]] = Field(default_factory=list)
+    query: str = ""
+    chapter: int | None = None
+    market: str | None = None
+    body_language: str | None = None
+    writing_profile_ref: Dict[str, Any] = Field(default_factory=dict)
+    rule_pack_versions: Dict[str, str] = Field(default_factory=dict)
+    language_pack_version: str | None = None
 
 
 class OverrideBundle(BaseModel):
@@ -27,6 +34,7 @@ class MasterSetting(BaseModel):
     base_context: List[Dict[str, Any]] = Field(default_factory=list)
     source_trace: List[Dict[str, Any]] = Field(default_factory=list)
     override_policy: Dict[str, List[str]] = Field(default_factory=dict)
+    editorial_guidance: Dict[str, Any] = Field(default_factory=dict)
 
 
 class ChapterBrief(BaseModel):
@@ -35,6 +43,8 @@ class ChapterBrief(BaseModel):
     chapter_directive: Dict[str, Any] = Field(default_factory=dict)
     dynamic_context: List[Dict[str, Any]] = Field(default_factory=list)
     source_trace: List[Dict[str, Any]] = Field(default_factory=list)
+    language_rules: Dict[str, Any] = Field(default_factory=dict)
+    editorial_guidance: Dict[str, Any] = Field(default_factory=dict)
 
 
 class VolumeBrief(BaseModel):
@@ -45,6 +55,7 @@ class VolumeBrief(BaseModel):
     selected_scenes: List[str] = Field(default_factory=list)
     anti_patterns: List[str] = Field(default_factory=list)
     system_constraints: List[str] = Field(default_factory=list)
+    editorial_guidance: Dict[str, Any] = Field(default_factory=dict)
     overrides: OverrideBundle = Field(default_factory=OverrideBundle)
 
 
@@ -56,4 +67,7 @@ class ReviewContract(BaseModel):
     anti_patterns: List[str] = Field(default_factory=list)
     system_constraints: List[str] = Field(default_factory=list)
     review_thresholds: Dict[str, Any] = Field(default_factory=dict)
+    language_advisory: Dict[str, Any] = Field(default_factory=dict)
+    aesthetics_advisory: List[Dict[str, Any]] = Field(default_factory=list)
+    editorial_guidance: Dict[str, Any] = Field(default_factory=dict)
     overrides: OverrideBundle = Field(default_factory=OverrideBundle)

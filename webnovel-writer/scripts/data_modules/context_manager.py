@@ -12,6 +12,7 @@ import logging
 from pathlib import Path
 
 from runtime_compat import enable_windows_utf8_stdio
+from genre_taxonomy import resolve_template_files
 from typing import Any, Dict, List, Optional
 
 try:
@@ -31,6 +32,8 @@ from .context_ranker import ContextRanker
 from .prewrite_validator import PrewriteValidator
 from .story_contracts import read_json_if_exists
 from .story_runtime_sources import RuntimeSourceSnapshot, load_runtime_sources
+from .writing_profile import load_writing_profile, load_rule_bundles
+from .editorial_guidance import build_editorial_guidance
 from .context_weights import (
     DEFAULT_TEMPLATE as CONTEXT_DEFAULT_TEMPLATE,
     TEMPLATE_WEIGHTS as CONTEXT_TEMPLATE_WEIGHTS,
@@ -328,9 +331,6 @@ class ContextManager:
         genres = self._parse_genre_tokens(genre_raw)
         if not genres:
             genres = [fallback]
-        max_genres = max(1, int(getattr(self.config, "context_genre_profile_max_genres", 2)))
-        genres = genres[:max_genres]
-
         primary_genre = genres[0]
         secondary_genres = genres[1:]
         composite = len(genres) > 1
@@ -375,6 +375,39 @@ class ContextManager:
         state: Dict[str, Any],
         story_contract: Dict[str, Any],
     ) -> Dict[str, Any]:
+        profile = load_writing_profile(self.config.project_root, state=state)
+        if not profile.reference().get("legacy"):
+            bundles = load_rule_bundles(profile)
+            genres = [profile.primary_genre, *profile.secondary_genres]
+            # Explicit projects use their complete persisted selection. Overseas
+            # never opens domestic profile excerpts or shuangwen fallbacks.
+            excerpt = ""
+            secondary_excerpts: list[str] = []
+            if profile.market == "domestic":
+                template_root = Path(__file__).resolve().parents[2] / "templates" / "genres"
+                excerpts = []
+                for genre in genres:
+                    texts = []
+                    for name in resolve_template_files(genre):
+                        path = template_root / name
+                        if path.is_file():
+                            texts.append(path.read_text(encoding="utf-8"))
+                    excerpts.append("\n\n".join(texts))
+                excerpt, secondary_excerpts = excerpts[0], excerpts[1:]
+            reference_text = "\n\n".join([excerpt, *secondary_excerpts])
+            return {
+                "genre": profile.primary_genre, "genre_raw": "+".join(genres),
+                "genres": genres, "secondary_genres": list(profile.secondary_genres),
+                "composite": bool(profile.secondary_genres), "mode": "writing_profile",
+                "market": profile.market, "body_language": profile.body_language,
+                "writing_profile": profile.to_snapshot(), "writing_profile_ref": profile.reference(),
+                "genre_rules": bundles["genre_rules"], "language_rules": bundles["language_rules"],
+                "editorial_guidance": build_editorial_guidance(profile, bundles),
+                "profile_excerpt": excerpt, "taxonomy_excerpt": "",
+                "secondary_profile_excerpts": secondary_excerpts,
+                "reference_hints": self._extract_markdown_refs(reference_text) if reference_text else [],
+                "composite_hints": [],
+            }
         legacy_profile = self._load_genre_profile(state)
         if legacy_profile:
             legacy_profile = dict(legacy_profile)
@@ -389,7 +422,9 @@ class ContextManager:
         if not primary_genre:
             return legacy_profile or {}
 
-        runtime_profile = self._load_genre_profile({"project": {"genre": primary_genre}})
+        route = (story_contract.get("master_setting") or {}).get("route") or {}
+        secondary = list(route.get("secondary_genres") or legacy_profile.get("secondary_genres") or [])
+        runtime_profile = self._load_genre_profile({"project": {"genre": "+".join([primary_genre, *secondary])}})
         runtime_profile = dict(runtime_profile or {})
         runtime_profile.setdefault("genre", primary_genre)
         runtime_profile.setdefault("genre_raw", primary_genre)
@@ -415,6 +450,19 @@ class ContextManager:
     ) -> Dict[str, Any]:
         if not getattr(self.config, "context_writing_guidance_enabled", True):
             return {}
+
+        if genre_profile.get("market") == "overseas":
+            return {
+                "chapter": chapter, "market": "overseas",
+                "body_language": genre_profile["body_language"],
+                "writing_profile_ref": genre_profile["writing_profile_ref"],
+                "genre_rules": genre_profile["genre_rules"],
+                "language_rules": genre_profile["language_rules"],
+                "editorial_guidance": genre_profile["editorial_guidance"],
+                "guidance_items": [{"genre": pack["id"], "guidance": pack.get("writing_guidance", [])} for pack in genre_profile["genre_rules"]],
+                "checklist": [], "methodology": {},
+                "advisory_only": True,
+            }
 
         limit = max(1, int(getattr(self.config, "context_writing_guidance_max_items", 6)))
         low_score_threshold = float(
@@ -475,6 +523,7 @@ class ContextManager:
         return {
             "chapter": chapter,
             "guidance_items": guidance[:limit],
+            "language_rules": genre_profile.get("language_rules") or {},
             "checklist": checklist,
             "checklist_score": checklist_score,
             "methodology": methodology_strategy,

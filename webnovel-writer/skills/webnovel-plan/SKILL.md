@@ -40,14 +40,20 @@ python -X utf8 "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" pla
 
 ## 读取策略（按阶段触发，不预读全部 reference）
 
+先读 `../../references/writing-rules/README.md`，再运行 `python -X utf8 "${SCRIPTS_DIR}/writing_profile.py" --project-root "${PROJECT_ROOT}" --bundles`。以 `.story-system/WRITING_PROFILE.json` 验证后的市场、正文语言、主类型和全部辅类型、章长/单位、POV、时态及固定版本规划。已有选择不重问；国外题材 draft 未获显式试用、配置缺损或合同指纹不符时停止，禁止回落国内链。
+
+国外分支读取全部已选题材包的 `reader_promise/outline_guidance` 及对应语言包。下表的国内文风、爽点、Strand 和节奏参考不进入国外上下文；输出模板与节点参考仅取文件结构、时间、因果和节点格式段，不连带国内固定高潮间隔、字数窗口或节点数量建议。
+
+题材包若提供 `editorial_framework`，须在 `大纲/题材承诺.md` 增量规划：主类型的主要回报、各辅类型在本书中的作用、可跨场景/章节/卷观察的证据机会，以及已确立的能力/资源/关系/信息限制。账本只引用作者设定或正文事实；保留未兑现项为计划，不为每章填表造变化，不把所有题材塞进每章。不同类型承诺冲突时列出影响和选项，尊重作者已选重点。
+
 每个 reference 只在对应 Step 触发时读取，且优先区段读：先用 `Grep` 匹配 `^#{2,4} ` 定位标题锚点行号，再用 `Read` 的 offset/limit 取目标段。
 
 | 触发 | 读取方式 | 文件 |
 |------|---------|------|
 | Step 4 | 全文 | `${SKILL_ROOT}/../../templates/output/大纲-卷节拍表.md` |
 | Step 5 | 全文 | `${SKILL_ROOT}/../../templates/output/大纲-卷时间线.md` |
-| Step 6 always | 区段 | `${SKILL_ROOT}/../../references/genre-profiles.md`（仅当前 genre 的 `### 2.x` 段） |
-| Step 6 always | 全文 | `${SKILL_ROOT}/../../references/shared/strand-weave-pattern.md` |
+| Step 6 国内 | 区段 | `${SKILL_ROOT}/../../references/genre-profiles.md`（仅当前 genre 的 `### 2.x` 段） |
+| Step 6 国内 | 全文 | `${SKILL_ROOT}/../../references/shared/strand-weave-pattern.md` |
 | 章纲拆分 always | 区段 | `${SKILL_ROOT}/../../references/outlining/plot-signal-vs-spoiler.md` |
 | Step 6 需要爽点 | 区段 | `${SKILL_ROOT}/../../references/shared/cool-points-guide.md` |
 | Step 6/7 需要冲突 | 区段 | `${SKILL_ROOT}/references/outlining/conflict-design.md` |
@@ -55,12 +61,12 @@ python -X utf8 "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" pla
 | Step 7 追读力分析 | 区段 | `${SKILL_ROOT}/../../references/reading-power-taxonomy.md` |
 | Step 7 章纲细化 + 节点规范 | 区段 | `${SKILL_ROOT}/references/outlining/chapter-planning.md` |
 
-CSV 创作参考用检索读，不 `cat` 整表：
+CSV 创作参考用带项目根的检索读，不 `cat` 整表；国外无适用结果时不使用“全部”或国内 fallback：
 
 ```bash
-python -X utf8 "${SCRIPTS_DIR}/reference_search.py" --skill plan --table 爽点与节奏 --query "{卷级核心冲突}" --genre "${GENRE}"
-python -X utf8 "${SCRIPTS_DIR}/reference_search.py" --skill plan --table 桥段套路 --query "{卷级核心冲突}" --genre "${GENRE}"
-python -X utf8 "${SCRIPTS_DIR}/reference_search.py" --skill plan --table 命名规则 --query "角色命名" --genre "${GENRE}"
+python -X utf8 "${SCRIPTS_DIR}/reference_search.py" --project-root "${PROJECT_ROOT}" --skill plan --table 爽点与节奏 --query "{卷级核心冲突}" --genre "${GENRE}"
+python -X utf8 "${SCRIPTS_DIR}/reference_search.py" --project-root "${PROJECT_ROOT}" --skill plan --table 桥段套路 --query "{卷级核心冲突}" --genre "${GENRE}"
+python -X utf8 "${SCRIPTS_DIR}/reference_search.py" --project-root "${PROJECT_ROOT}" --skill plan --table 命名规则 --query "角色命名" --genre "${GENRE}"
 ```
 
 ## 执行流程
@@ -74,8 +80,9 @@ cat "$PROJECT_ROOT/.webnovel/state.json"
 # 总纲（全局蓝图）；确认卷名/章节范围/核心冲突/卷末高潮，不足则阻断
 cat "$PROJECT_ROOT/大纲/总纲.md"
 
-# 题材（来自 init 配置快照，后续 CSV 检索和裁决匹配依赖此值）；写后主链真源仍是 .story-system/
-GENRE="$(python -X utf8 -c "import json; s=json.load(open('${PROJECT_ROOT}/.webnovel/state.json',encoding='utf-8')); pi=s.get('project_info',{}); print(pi.get('genre') or s.get('project',{}).get('genre',''))")"
+# helper 验证唯一配置及全部规则包；state 快照不能覆盖市场、语言或版本
+PROFILE_JSON="$(python -X utf8 "${SCRIPTS_DIR}/writing_profile.py" --project-root "${PROJECT_ROOT}" --bundles)" || exit 1
+GENRE="$(python -X utf8 -c "import json,sys; print(json.loads(sys.argv[1])['profile']['primary_genre'])" "${PROFILE_JSON}")"
 ```
 
 按需读取设定集：`设定集/世界观.md`、`设定集/力量体系.md`、`设定集/主角卡.md`、`设定集/反派设计.md`、`.webnovel/idea_bank.json`。
@@ -111,7 +118,7 @@ python -X utf8 "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" mem
 
 加载模板 `${SKILL_ROOT}/../../templates/output/大纲-卷节拍表.md`。
 
-硬要求：必须填写中段反转，确无则写"无（理由：...）"；危机链至少 3 次递增；卷末新钩子必须能落到最后一章的章末未闭合问题。
+国内按模板填写中段反转，确无则写"无（理由：...）"；危机链至少 3 次递增；卷末新钩子须落到最后一章的未闭合问题。国外仅沿用表结构，依题材承诺安排变化、后果与卷末状态，不强制相同危机次数和节拍位置。
 
 输出文件：`大纲/第{volume_id}卷-节拍表.md`
 
@@ -125,9 +132,9 @@ python -X utf8 "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" mem
 
 ### Step 6：生成卷纲骨架
 
-必读 `${SKILL_ROOT}/../../references/genre-profiles.md` 与 `${SKILL_ROOT}/../../references/shared/strand-weave-pattern.md`；按需读取爽点 / 冲突 / 节奏 reference（见读取策略表）。
+国内读取 `genre-profiles.md`、`strand-weave-pattern.md` 及按需爽点 / 冲突 / 节奏参考；国外读取 helper 的全部题材包 `outline_guidance`，不加载上述国内默认。
 
-卷纲必须明确：卷摘要、关键人物与反派层级、Strand 分布、爽点密度规划、伏笔规划、约束触发规划。
+卷纲必须明确：卷摘要、关键人物与对抗、伏笔规划、约束触发规划；国内补 Strand 分布和爽点密度，国外按成长/机制/关系等已选承诺记录变化与兑现，不套用固定密度。
 
 跨卷一致性检查（非首卷必须执行）：
 
@@ -139,7 +146,7 @@ python -X utf8 "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" mem
 
 批次规则：默认 `10章/批`；复杂题材或多线并进降到 `8章/批`；简单升级流放宽到 `12章/批`；不建议单批超过 `12章`。
 
-按需读取 `${SKILL_ROOT}/../../references/reading-power-taxonomy.md` 与 `${SKILL_ROOT}/references/outlining/chapter-planning.md`。
+国内按需读取 `reading-power-taxonomy.md`；`chapter-planning.md` 国外仅取结构化节点格式和时间/因果字段。国外章节的回报、场景长度和结尾方式依题材包与本书选择，不默认每章升级、强钩子或固定数量情绪脉冲。
 
 每章必须包含：目标、阻力、代价、时间锚点、章内时间跨度、与上章时间差、倒计时状态、爽点、Strand、反派层级、视角/主角、关键实体、本章变化、章末未闭合问题、钩子，以及结构化节点 `CBN`、`CPNs`、`CEN`、`必须覆盖节点`、`本章禁区`。
 
@@ -207,10 +214,11 @@ python "${SCRIPTS_DIR}/webnovel.py" --project-root "$PROJECT_ROOT" update-state 
 
 ### Step 10：刷新 Story System 写作合同（本次规划已落到具体章节时必须执行）
 
-genre 从 `state.json` 初始化配置快照读取；写前主链真源是 `.story-system/` 合同树。必须先从详细大纲解析真实 `CHAPTER_GOAL`，禁止传 `{章纲目标}` / `第N章章纲目标` 这类占位文本。
+genre 从 helper 验证的 `WRITING_PROFILE.json` 读取；主辅类型全部保留，合同指纹与固定版本必须一致。必须先从详细大纲解析真实 `CHAPTER_GOAL`，禁止传 `{章纲目标}` / `第N章章纲目标` 这类占位文本。
 
 ```bash
-GENRE="$(python -X utf8 -c "import json; s=json.load(open('${PROJECT_ROOT}/.webnovel/state.json',encoding='utf-8')); pi=s.get('project_info',{}); print(pi.get('genre') or s.get('project',{}).get('genre',''))")"
+PROFILE_JSON="$(python -X utf8 "${SCRIPTS_DIR}/writing_profile.py" --project-root "${PROJECT_ROOT}" --bundles)" || exit 1
+GENRE="$(python -X utf8 -c "import json,sys; print(json.loads(sys.argv[1])['profile']['primary_genre'])" "${PROFILE_JSON}")"
 
 python -X utf8 "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" story-system "${CHAPTER_GOAL}" \
   --genre "${GENRE}" --chapter {chapter_num} --persist --emit-runtime-contracts --format both

@@ -17,7 +17,7 @@ GENRE_PROFILE_KEY_ALIASES: dict[str, str] = {
     "玄幻": "xianxia",
     "爽文/系统流": "shuangwen",
     "高武": "xianxia",
-    "西幻": "xianxia",
+    "西幻": "western-fantasy",
     "都市异能": "urban-power",
     "都市脑洞": "urban-power",
     "都市日常": "urban-power",

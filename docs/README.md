@@ -18,6 +18,7 @@
 - [`guides/commands.md`](./guides/commands.md)：Skill 命令与 CLI 子命令速查
 - [`guides/rag-and-config.md`](./guides/rag-and-config.md)：RAG 检索链路、环境变量与配置
 - [`guides/genres.md`](./guides/genres.md)：37 个题材模板与复合题材规则
+- [`guides/writing-profiles.md`](./guides/writing-profiles.md)：国内／国外市场、正文语言、主辅题材及统一计量
 
 ### 运维
 

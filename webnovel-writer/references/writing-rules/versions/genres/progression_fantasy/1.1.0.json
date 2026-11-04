@@ -1,0 +1,158 @@
+{
+  "id": "progression_fantasy",
+  "version": "1.1.0",
+  "status": "draft",
+  "market": "overseas",
+  "name": "成长奇幻（Progression Fantasy）",
+  "reader_promise": "主角能力的学习、练习与发展构成主要阅读回报；成长改变其可做的选择，并在关键处得到可辨认的兑现。",
+  "scope": {
+    "includes": [
+      "有持续能力成长主线的奇幻",
+      "训练、试验、受挫和应用之间的因果",
+      "数值化或非数值化的成长"
+    ],
+    "not_required": [
+      "游戏界面",
+      "等级数字",
+      "修仙境界",
+      "每章升级",
+      "固定开篇和高潮字数"
+    ],
+    "boundaries": "使用 Andrew Rowe 的作者定义作为起点，不声称该定义覆盖所有作者或平台。仅有一次能力觉醒不足以证明成长是全书中心。",
+    "evidence_status": "已读定义性一手资料；下列提问、流程和原创示例是本项目的编辑方案，尚未经过目标读者、平台或长篇样章验证。"
+  },
+  "init_questions": [
+    "主角最初不能完成什么，读者将通过什么具体结果辨认成长？",
+    "成长依赖训练、知识、资源、合作还是其他条件？谁控制这些条件？",
+    "能力的上限、代价与失败后果是什么？如何避免临场增加新能力解围？",
+    "主角为什么愿意承担成长的代价？成长会损害哪段关系或价值？",
+    "若有辅题材，其承诺如何与成长主线相互影响？请保留全部辅题材。"
+  ],
+  "outline_guidance": [
+    "为卷记录初始能力、目标任务、障碍、获得新方法的过程及应用结果；用可观察的差异验证成长。",
+    "把练习或失败中的信息带入后续选择，避免训练场景与真正冲突互不相干。",
+    "安排资源、时间、伦理或关系上的取舍；具体强度由故事决定，不设置每章固定兑现次数。",
+    "让新能力解决已铺垫的一部分问题，同时保留已建立的限制；卷末不必机械升阶。",
+    "主辅题材分别列出读者承诺与冲突点，不把所有辅题材改写成升级奖励。"
+  ],
+  "writing_guidance": [
+    "从角色当下尝试写出成长：他如何判断、哪里做错、改变了什么方法。",
+    "说明能力时优先提供足够理解当前选择的信息；术语密度与叙述距离随正文语言和人物调整。",
+    "让读者看到胜利与代价之间的联系；既有能力的巧用可以构成兑现，无需反复增加新技能。",
+    "POV、时态、章长和计量单位读取项目配置；不用中文句长或国内爽点间距套用英文。"
+  ],
+  "review_focus": {
+    "fact_checks": [
+      "能力的获得与使用是否有已建立依据",
+      "训练、消耗和恢复时间是否自洽",
+      "当前结果是否突破既有能力限制而无解释"
+    ],
+    "advisory_checks": [
+      "成长是否改变选择与局势",
+      "练习是否具有角色动机",
+      "读者能否辨认本次变化而不依赖重复说明"
+    ],
+    "advisory_policy": "审美与题材承诺建议单独记录，不新增事实 reviewer 维度，不自动产生 blocking。"
+  },
+  "examples": [
+    {
+      "language": "zh",
+      "text": "第三次试桥时，伊蕾没有增加符火。她把火线移到裂缝两侧，等桥面停止颤动，才松开一根手指。桥只多撑了两息；这一次，车上的孩子已经过去。",
+      "commentary": "原创演示：能力变化通过不同方法和具体结果呈现；两息并非通用升级单位。"
+    },
+    {
+      "language": "en",
+      "text": "On the third attempt, Ilyra fed no more heat into the seam. She spread it along both edges instead. The bridge held long enough for the cart to pass, and the burn climbed another inch up her wrist.",
+      "commentary": "原创英文表达示例：观察、应用与代价相连；不是译自国内模板。"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://andrewkrowe.wordpress.com/2019/02/26/progression-fantasy-a-new-subgenre-concept/",
+      "title": "Progression Fantasy: A New Subgenre Concept",
+      "publisher_or_author": "Andrew Rowe（作者本人博客）",
+      "accessed_on": "2026-11-03",
+      "read_scope": "实际打开并读取文章正文，重点为定义、训练与能力发展、可量化但非必须的成长、与 LitRPG 的区别及作者声明的非排他边界。",
+      "limits": "作者提出的分类观点，不是平台标准；没有据此验证本项目生成质量。"
+    }
+  ],
+  "revision_notes": {
+    "previous_version": "1.0.0",
+    "evidence_basis": "1.1.0 新增内容是本项目编辑方案，依照已读来源的类型边界设计；不是来源原文、统一行业规则或已验证的读者偏好。连续样章和模型交叉审稿只提供有限案例证据。",
+    "validation_record": "docs/research/overseas-quality-round2/README.md"
+  },
+  "editorial_framework": {
+    "evidence_basis": "1.1.0 新增内容是本项目编辑方案，依照已读来源的类型边界设计；不是来源原文、统一行业规则或已验证的读者偏好。连续样章和模型交叉审稿只提供有限案例证据。",
+    "primary_application": "把持续学习与能力发展作为主要回报。先明确初始不能做的任务，再安排有信息增量的尝试、有限改进和有代价的应用；可跨多章兑现，不必每章升级。",
+    "secondary_application": "为主类型的关键选择提供一条持续学习的支线，说明它怎样改变解法。保留成长的因果与限制，但不把主类型的关系、谜题或制度问题全改成力量奖励，也不要求每章展示训练。",
+    "promise_horizon": [
+      {
+        "horizon": "场景",
+        "question": "本次尝试让角色知道了什么，为什么改变下一步？",
+        "evidence": "一个可观察的失败信号、反馈、方法变化或能力应用；安静观察也可以产生信息。"
+      },
+      {
+        "horizon": "跨章",
+        "question": "之前学到的方法，何时以不同处境验证？",
+        "evidence": "前章建立的限制、代价和未解决问题进入后章的判断；不靠临时新能力解释结果。"
+      },
+      {
+        "horizon": "卷",
+        "question": "现在能完成什么原先不能完成的事，付出了什么？",
+        "evidence": "任务或决策空间的具体变化，仍然存在的限制，以及关系、时间或资源后果。"
+      }
+    ],
+    "continuity_ledger": [
+      {
+        "field": "能力与边界",
+        "record": "已证实能做/不能做什么、前提、持续时间、误差与角色推测。",
+        "carryover_check": "后章的能力用法是否已有根据；一次成功是否被误写为不限条件的掌握？"
+      },
+      {
+        "field": "学习信息",
+        "record": "尝试、反馈、改变的方法、验证结果；区分练习时推测与已验证结论。",
+        "carryover_check": "后续选择是否真正用上前章的信息，而非再讲一次成长道理？"
+      },
+      {
+        "field": "代价与恢复",
+        "record": "时间、伤害、材料、机会、恢复条件以及谁承担成本。",
+        "carryover_check": "训练和胜利的代价是否在下一章仍有后果？不能因换章自动恢复。"
+      },
+      {
+        "field": "动机与关系",
+        "record": "谁为何愿意教、帮或拒绝，能力增长改变了什么责任。",
+        "carryover_check": "技能进步是否无依据替代了信任、地位或经济问题？"
+      }
+    ],
+    "scene_checks": [
+      {
+        "question": "删去成长宣言后，读者还能看见什么变化？",
+        "evidence": "定位动作、判断或结果差异；没有变化时记录为铺垫，不捏造成兑现。"
+      },
+      {
+        "question": "失败后获得的信息与新解法有因果吗？",
+        "evidence": "给出反馈→推理→尝试的正文位置；不要求把过程写成教程。"
+      },
+      {
+        "question": "新能力仍有哪些不适用条件？",
+        "evidence": "核对已有前提；是否明示限制取决于当前选择需不需要它。"
+      }
+    ],
+    "contrast_cases": [
+      {
+        "language": "en",
+        "weak": "He trained until he was stronger. When the wall fell, his new power held it up.",
+        "revision": "The practice joint had split whenever Orin braced the rotten grain. At the wall, he let that beam fall and caught the sound crosspiece instead. It held for four breaths. He spent all four getting Tessa clear.",
+        "reason": "把训练反馈转成选择，明确局部成功和时间限制；尚需正文先建立支撑能力。",
+        "limits": "原创对照片段，仅演示因果，不规定所有成长都用工艺、救人或四息。"
+      },
+      {
+        "language": "zh",
+        "weak": "练习让她又突破了一层，眼前的问题自然迎刃而解。",
+        "revision": "昨天她只能辨出铜片有没有裂，今天终于能摸出裂口的方向。她把两片都挑了出来，却仍不敢独自修那只锅。",
+        "reason": "用有限可辨变化呈现成长，同时保留尚未掌握的任务。",
+        "limits": "原创编辑示范，不是市场节拍要求。"
+      }
+    ]
+  }
+}

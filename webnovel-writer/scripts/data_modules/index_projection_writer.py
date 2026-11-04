@@ -10,6 +10,7 @@ from typing import Any
 from .commit_artifacts import extraction_dict, extraction_list, extraction_text
 from .config import DataModulesConfig
 from .index_manager import ChapterMeta, IndexManager, SceneMeta, StateChangeMeta
+from .text_metrics import chapter_measurement
 
 try:
     from chapter_paths import find_chapter_file
@@ -73,8 +74,14 @@ class IndexProjectionWriter:
         location = str(meta.get("location") or commit_payload.get("location") or "").strip()
         summary = str(extraction_text(commit_payload, "summary_text") or meta.get("summary") or "").strip()
         word_count = self._safe_int(meta.get("word_count") or commit_payload.get("word_count"))
-        if word_count <= 0:
-            word_count = self._chapter_word_count(chapter)
+        measurement = chapter_measurement(self.project_root, chapter, incoming_count=word_count)
+        word_count = measurement["word_count"]
+        meta.update(measurement)
+        artifact = commit_payload.get("extraction_result")
+        if isinstance(artifact, dict):
+            artifact["chapter_meta"] = meta
+        else:
+            commit_payload["chapter_meta"] = meta
 
         characters = meta.get("characters") or self._collect_character_ids(commit_payload)
         if not isinstance(characters, list):
@@ -88,6 +95,7 @@ class IndexProjectionWriter:
                 word_count=word_count,
                 characters=[str(c) for c in characters if str(c).strip()],
                 summary=summary,
+                count_unit=measurement["count_unit"],
             )
         )
         return True
@@ -296,19 +304,6 @@ class IndexProjectionWriter:
         stem = path.stem
         match = re.match(r"第0*\d+章[-_ ]+(.+)$", stem)
         return match.group(1).strip() if match else ""
-
-    def _chapter_word_count(self, chapter: int) -> int:
-        path = find_chapter_file(self.project_root, chapter)
-        if path is None:
-            return 0
-        try:
-            text = path.read_text(encoding="utf-8")
-        except OSError:
-            return 0
-        text = re.sub(r"```[\s\S]*?```", "", text)
-        text = re.sub(r"^#+ .*$", "", text, flags=re.MULTILINE)
-        text = re.sub(r"---", "", text)
-        return len(text.strip())
 
     def _stringify(self, value: Any) -> str:
         if value is None:

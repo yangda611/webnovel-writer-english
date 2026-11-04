@@ -12,6 +12,7 @@ argument-hint: "[书名或灵感（可选）]"
 - 结构化交互收集足够信息，避免"先生成再返工"。
 - 产出可落地骨架：`.webnovel/state.json`、`设定集/*`、`大纲/总纲.md`、`.webnovel/idea_bank.json`、`.story-system/MASTER_SETTING.json`。
 - 保证后续 `/webnovel-plan` 与 `/webnovel-write` 可直接运行。
+- `.story-system/WRITING_PROFILE.json` 是市场、正文语言、主辅类型与规则版本的唯一持久配置；保留 `正文/`、`大纲/`、`设定集/` 等中文路径。
 
 ## 执行原则
 
@@ -21,16 +22,17 @@ argument-hint: "[书名或灵感（可选）]"
 
 ## 引用加载策略
 
-路径说明：`references/` 指 `skills/webnovel-init/references/`；`../../references/` 指共享 references。详细采集字段见 `references/init-collection-schema.md`（按需区段读，逐项收集，必填项以「充分性闸门」为准）。
+路径说明：`references/` 指 `skills/webnovel-init/references/`；`../../references/` 指共享 references。先读 `../../references/writing-rules/README.md`；详细采集字段见 `references/init-collection-schema.md`（按需区段读，逐项收集，必填项以「充分性闸门」为准）。国外分支只加载对应版本的国外题材包和正文语言包，以下国内引用不得自动带入。
 
 | Step | Trigger | Reference |
 |------|---------|-----------|
-| Step 1 | always | `references/system-data-flow.md`、`references/genre-tropes.md` |
-| 题材/卖点采集 | always | `../../references/genre-profiles.md`（只读当前 genre 段） |
+| Step 1 | always | `references/system-data-flow.md`；仅国内再读 `references/genre-tropes.md` |
+| 题材/卖点采集 | 国内 | `../../references/genre-profiles.md`（只读当前 genre 段） |
+| 题材/卖点采集 | 国外 | 已选全部题材 JSON 的 `reader_promise/init_questions` 与正文语言 JSON，不使用国内模板翻译 |
 | 角色卡顿 | 人物扁平 | `references/worldbuilding/character-design.md` |
 | 世界观/力量 | 按需 | `references/worldbuilding/faction-systems.md`、`references/worldbuilding/power-systems.md`、`references/worldbuilding/world-rules.md`、`references/worldbuilding/setting-consistency.md` |
-| 创意约束 | Step 6 | `references/creativity/creativity-constraints.md`（区段：采集读 `## 一、创意包 Schema (Idea Package)`、`## 六、硬约束驱动创意 (Hard Constraints)`、`## 八、评分系统 (Scoring System)`，评分展示读 `### 8.1 五维评分`）、`references/creativity/selling-points.md`（区段：`## 9. 核心卖点定位模板` 骨架，按需补 `### 1.3 核心卖点黄金公式`、`## 7. 实战检查清单`）；复合题材读 `creative-combination.md`；卡顿读 `inspiration-collection.md`；题材命中读 `anti-trope-*.md` |
-| 命名 | 开始命名 | `python -X utf8 "${SCRIPTS_DIR}/reference_search.py" --skill init --table 命名规则 --query "{命名对象} {题材}" --genre {题材}` |
+| 创意约束 | 国内 Step 6 | `references/creativity/creativity-constraints.md`（区段：采集读 `## 一、创意包 Schema (Idea Package)`、`## 六、硬约束驱动创意 (Hard Constraints)`、`## 八、评分系统 (Scoring System)`，评分展示读 `### 8.1 五维评分`）、`references/creativity/selling-points.md`（区段：`## 9. 核心卖点定位模板` 骨架，按需补 `### 1.3 核心卖点黄金公式`、`## 7. 实战检查清单`）；复合题材读 `creative-combination.md`；卡顿读 `inspiration-collection.md`；题材命中读 `anti-trope-*.md` |
+| 命名 | 开始命名 | 依 `writing-rules/README.md` 带项目配置检索；国外没有已审阅适用资料时不回退国内库 |
 
 按需读取上述长细则（创意约束、反套路库、世界观设计指南、卖点模板），不内联其条目。
 
@@ -61,13 +63,24 @@ export SCRIPTS_DIR="${CLAUDE_PLUGIN_ROOT}/scripts"
 - 确认当前目录可写；确认入口脚本 `${SCRIPTS_DIR}/webnovel.py` 存在（仅支持插件目录）。
 - 初始化前不要用 `where` 把 `WORKSPACE_ROOT` 解析成书项目根；新项目尚不存在时 `where` 可能命中旧指针或旧项目。
 - 只打印工作区与脚本目录，确认生成目标将在工作区下的书名安全化子目录中。
-- 加载最小参考：`references/system-data-flow.md`、`references/genre-tropes.md`；`templates/genres/` 仅在选定题材后按需读取。
+- 加载最小参考：`references/system-data-flow.md`、`../../references/writing-rules/README.md`；选定市场后再决定是否读取国内 `genre-tropes.md` 或 `templates/genres/`。
+- 已有项目先用 `writing_profile.py --project-root "${PROJECT_ROOT}" --bundles` 验证并读取配置，不重复询问已确定选项、不覆盖正文或固定版本；新项目先采集下一步菜单。
 
 输出：进入 Deep 采集前的"已知信息清单"和"待收集清单"。
 
+### Step 1.2：市场、正文语言与全部主辅类型（先于原问答）
+
+菜单固定顺序：
+1. 市场：国内 `domestic` / 国外 `overseas`。
+2. 国外市场再选正文：中文 `zh` / 英文 `en`；国内默认中文，第一版国内英文明确报错。
+3. 主类型一项，再收集**全部**辅类型；国外首批可试用 `progression_fantasy`、`litrpg`、`romantasy`。允许中文别名，但逐项解析；未知项说明当前未注册并保留输入，不能自动丢弃、改成仙侠或截断两个之后的辅类型。
+4. 然后进入原有灵感、故事核、人物、成长机制、世界观问答，并补齐对应包的 `init_questions`。
+
+同步记录 `chapter_length`、`chapter_unit`（中文 characters / 英文 words）、可选 POV/时态/平台。题材与语言独立，英文正文不改变中文交互。三个国外题材包与两个语言包均为 `draft`，说明研究和质量验证边界；国外题材只有作者显式选择试用才设置 `allow_draft_rules=true`，语言包作为版本化表达建议展示，不额外阻断国内中文初始化，已有选择不重复确认。初始化完成后必须运行 helper 读取真实版本，禁止把临时收集对象当成已保存配置。
+
 ### Step 1.5：灵感来源询问（可选）
 
-进入故事核采集前，必须先用 `AskUserQuestion` 或直接提问确认用户是否提供灵感来源。不要默认拆书，也不要把参考作品当作必填项。
+进入故事核采集前，若用户尚未提供灵感方式，再用 `AskUserQuestion` 或直接提问确认。已明确原创或参考选择时直接消费，不重复询问。不要默认拆书，也不要把参考作品当作必填项。
 
 建议询问：
 
@@ -82,7 +95,7 @@ export SCRIPTS_DIR="${CLAUDE_PLUGIN_ROOT}/scripts"
 ```text
 Use the Agent tool to run `webnovel-writer:deconstruction-agent`.
 
-Prompt: reference_title={reference_title}; reference_source={reference_source}; reference_text_path={reference_text_path}; reference_text_excerpt={reference_text_excerpt}; analysis_mode={quick|deep|auto}; init_goal={当前初始化故事方向或空}; target_genre={题材或空}。只返回 init_reference_research JSON 对象，不写任何文件，不创建目录，不写 .story-system、.webnovel、设定集、大纲、正文、idea_bank.json、state.json 或任何 canon/read model 文件。
+Prompt: reference_title={reference_title}; reference_source={reference_source}; reference_text_path={reference_text_path}; reference_text_excerpt={reference_text_excerpt}; analysis_mode={quick|deep|auto}; init_goal={当前初始化故事方向或空}; target_genre={题材或空}; market={已确认市场}; body_language={已确认正文语言}; primary_genre={主类型}; secondary_genres={全部辅类型}。只返回 init_reference_research JSON 对象，不写任何文件，不创建目录，不写 .story-system、.webnovel、设定集、大纲、正文、idea_bank.json、state.json 或任何 canon/read model 文件。
 ```
 
 调用后主流程必须记录一份 `SubagentRun` 汇总（仅供最终报告使用，不写入 canon）：
@@ -111,11 +124,11 @@ Prompt: reference_title={reference_title}; reference_source={reference_source}; 
 
 ### Step 2：故事核与商业定位
 
-必收：书名、题材（支持 A+B 复合）、目标规模（总字数或总章数）、一句话故事、核心冲突、目标读者/平台。
+必收：书名、市场、正文语言、主类型与全部辅类型、章长/单位、目标规模（总计量或总章数）、一句话故事、核心冲突、目标读者/平台。英文目标以 words 表述，不把中文“字数”直接当成词数。
 
-canonical 题材集合（写入 `project_info.genre`）：都市、玄幻、仙侠、奇幻、科幻、历史、悬疑、游戏、古言、现言、幻言、年代、种田、快穿、衍生。
+国内 canonical 题材集合（`project_info.genre` 为兼容快照）：都市、玄幻、仙侠、奇幻、科幻、历史、悬疑、游戏、古言、现言、幻言、年代、种田、快穿、衍生。国外使用已注册的国外 ID；配置真源是 `WRITING_PROFILE.json`。
 
-可自由输入细分 preset / 套路 / 形式，初始化脚本会映射到 canonical 并按 taxonomy 加载模板（示例：修仙、系统流、规则怪谈、宫斗宅斗、电竞、末世）。优先让用户自由描述再二次结构化确认；卡住时给 2-4 个候选方向。
+国内可自由输入细分 preset / 套路 / 形式，按国内 taxonomy 加载模板（示例：修仙、系统流、规则怪谈、宫斗宅斗、电竞、末世）。国外不进入此映射。优先结构化已有信息；卡住时给 2-4 个符合已选市场的候选方向。
 
 ### Step 3：角色骨架与关系冲突
 
@@ -135,10 +148,10 @@ canonical 题材集合（写入 `project_info.genre`）：都市、玄幻、仙�
 
 流程：
 1. 汇总 Step 1.5 已确认的灵感来源：原创想法、参考拆书结果、市场趋势、题材模板或反套路库。
-2. 基于题材映射加载反套路库（最多 2 个主相关库）。
+2. 国内基于题材映射加载反套路库（最多 2 个主相关库）；国外根据全部已选题材包设计差异，不加载国内反套路库或套用国内卖点评分。
 3. 生成 2-3 套创意包，每套含：一句话卖点、反套路规则 1 条、硬约束 2-3 条、主角缺陷驱动一句话、反派镜像一句话、开篇钩子。
 4. 三问筛选：为什么这题材必须这么写？换常规主角会不会塌？卖点能否一句话讲清且不撞模板？
-5. 展示五维评分（详见 `references/creativity/creativity-constraints.md` 的 `8.1 五维评分`）辅助决策。
+5. 国内可展示创意五维评分（详见 `references/creativity/creativity-constraints.md` 的 `8.1 五维评分`）；国外逐项说明读者承诺、人物选择与差异化理由，不伪造已验证市场分数。该创意评分与事实 reviewer 五维无关。
 6. 用户选择最终方案，或拒绝并给出原因。
 
 备注：
@@ -182,6 +195,8 @@ echo "PROJECT_ROOT=${PROJECT_ROOT}"
 
 参数全部来自上面的采集对象（书名/题材/主角/金手指/世界观/反派/创意约束等），逐字段映射为 `webnovel.py init` 的 `--*` 选项；完整字段清单见 `references/init-collection-schema.md`，可用 `python "${SCRIPTS_DIR}/webnovel.py" init --help` 核对选项名。
 
+必须传入 `--market`、`--body-language`、`--chapter-length`、`--chapter-unit`，并按 `--help` 的可重复参数约定传入全部辅类型；不拼接后自行截断。可选 `--pov`、`--tense`、`--platform` 与已获授权的 `--allow-draft-rules`。未知选项或不支持的类型明确报错，不删参数后重试成国内项目。
+
 ```bash
 python "${SCRIPTS_DIR}/webnovel.py" init \
   "${PROJECT_ROOT}" "{title}" "{genre}" \
@@ -207,14 +222,16 @@ python "${SCRIPTS_DIR}/webnovel.py" init \
 
 ### 3) Patch 总纲
 
-`大纲/总纲.md` 必须补齐：故事一句话、核心主线/暗线、创意约束（反套路、硬约束、主角缺陷、反派镜像）、反派分层、关键爽点里程碑（2-3 条）。
+`大纲/总纲.md` 必须补齐：故事一句话、核心主线/暗线、创意约束（反套路、硬约束、主角缺陷、反派镜像）、反派分层、关键回报里程碑。国外依题材包写成长、机制或关系兑现，不强制国内爽点间距。
 
 ### 4) 生成写前合同树（Story System 初始化）
 
 init 完成后立即生成 MASTER_SETTING，让后续 plan 有调性/禁忌参照。此处不传 `--chapter`（只生成 `MASTER_SETTING.json` 和 `anti_patterns.json`），也不传 `--emit-runtime-contracts`（还没有卷/章级数据）；plan 拆到具体章节时再生成 volume/chapter/review 合同。
 
 ```bash
-GENRE="$(python -X utf8 -c "import json,os; root=os.environ['PROJECT_ROOT']; s=json.load(open(root + '/.webnovel/state.json',encoding='utf-8')); pi=s.get('project_info',{}); print(pi.get('genre') or s.get('project',{}).get('genre',''))")"
+PROFILE_JSON="$(python -X utf8 "${SCRIPTS_DIR}/writing_profile.py" --project-root "${PROJECT_ROOT}" --bundles)" || exit 1
+GENRE="$(python -X utf8 -c "import json,sys; print(json.loads(sys.argv[1])['profile']['primary_genre'])" "${PROFILE_JSON}")"
+# 全部辅类型仍由项目配置加载，不由 GENRE 单字段重建。
 
 python -X utf8 "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" \
   story-system "${GENRE}" --genre "${GENRE}" --persist --format json
@@ -237,6 +254,7 @@ test "$(basename "${PROJECT_ROOT}")" = "${PROJECT_SLUG}"
 - 默认不生成 `金手指设计.md`、`复合题材-融合逻辑.md`、`爽点规划.md` 或空目录；这些以主角卡、世界观、卷纲为事实源。
 - `总纲.md` 已填核心主线与约束字段；`idea_bank.json` 已写入且与最终选定方案一致。
 - `.story-system/MASTER_SETTING.json` 存在且 `route.primary_genre` 非空。
+- `.story-system/WRITING_PROFILE.json` 存在，helper 校验通过；市场、正文语言、主辅类型、章长单位及版本与已确认信息一致。
 
 ## 失败处理（最小回滚）
 

@@ -64,6 +64,7 @@ class ChapterMeta:
     word_count: int
     characters: List[str]
     summary: str = ""
+    count_unit: str = "characters"
 
 
 @dataclass
@@ -250,11 +251,16 @@ class IndexManager(IndexChapterMixin, IndexEntityMixin, IndexDebtMixin, IndexRea
                     title TEXT,
                     location TEXT,
                     word_count INTEGER,
+                    count_unit TEXT NOT NULL DEFAULT 'characters',
                     characters TEXT,
                     summary TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
+
+            chapter_columns = {row[1] for row in cursor.execute("PRAGMA table_info(chapters)")}
+            if "count_unit" not in chapter_columns:
+                cursor.execute("ALTER TABLE chapters ADD COLUMN count_unit TEXT NOT NULL DEFAULT 'characters'")
 
             # 场景表
             cursor.execute("""
@@ -702,7 +708,17 @@ class IndexManager(IndexChapterMixin, IndexEntityMixin, IndexDebtMixin, IndexRea
             is_protagonist=is_protagonist,
             is_archived=bool(metadata.get("is_archived", existing.get("is_archived"))),
         )
+        payload = delta.get("payload") if isinstance(delta.get("payload"), dict) else {}
+        aliases = delta.get("aliases", payload.get("aliases", []))
+        if isinstance(aliases, str):
+            aliases = [aliases]
+        if not isinstance(aliases, list) or any(not isinstance(alias, str) for alias in aliases):
+            raise ValueError("entity aliases must be a string or list of strings")
         self.upsert_entity(entity, update_metadata=True)
+        # Alias additions are append-only and SQLite keeps replays idempotent.
+        # Preserve punctuation/case in reader-visible English names verbatim.
+        for alias in dict.fromkeys(alias.strip() for alias in aliases if alias.strip()):
+            self.register_alias(alias, entity_id, entity_type)
         return True
 
     # ==================== 章节操作 ====================
@@ -1028,15 +1044,19 @@ def main():
     elif args.command == "process-chapter":
         entities = load_json_arg(args.entities, base_dir=json_base_dir)
         scenes = load_json_arg(args.scenes, base_dir=json_base_dir)
-        stats = manager.process_chapter_data(
-            chapter=args.chapter,
-            title=args.title,
-            location=args.location,
-            word_count=args.word_count,
-            entities=entities,
-            scenes=scenes,
-        )
-        emit_success(stats, message="chapter_processed", chapter=args.chapter)
+        try:
+            stats = manager.process_chapter_data(
+                chapter=args.chapter,
+                title=args.title,
+                location=args.location,
+                word_count=args.word_count,
+                entities=entities,
+                scenes=scenes,
+            )
+        except (ValueError, OSError) as exc:
+            emit_error("INVALID_CHAPTER_MEASUREMENT", str(exc), chapter=args.chapter)
+        else:
+            emit_success(stats, message="chapter_processed", chapter=args.chapter)
 
     # ==================== v5.1 引入命令处理 ====================
 
