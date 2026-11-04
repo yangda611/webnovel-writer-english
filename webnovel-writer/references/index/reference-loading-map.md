@@ -13,6 +13,9 @@
 | Skill | 阶段 | 触发 | Reference | 读取方式 | 区段锚点（区段读时匹配此真实标题） |
 |-------|------|------|-----------|---------|-----------|
 | webnovel-init | Step 1 | always | `skills/webnovel-init/references/system-data-flow.md` | 全文 | — |
+| webnovel-adapt | Step 2-3 | always | `skills/webnovel-adapt/references/adaptation-craft.md` | 全文 | — |
+| webnovel-adapt | Step 3-4 | `--mode short-drama` | `skills/webnovel-adapt/references/short-drama-format.md` | 全文 | — |
+| webnovel-adapt | Step 3-4 | `--mode manju` | `skills/webnovel-adapt/references/manju-storyboard-format.md` | 全文 | — |
 | webnovel-init | Step 1 | always | `skills/webnovel-init/references/genre-tropes.md` | 区段 | 当前题材段 |
 | webnovel-init | 卖点/题材采集 | always | `references/genre-profiles.md` | 区段 | 当前 genre 的单个 `### 2.x`；按需加 `## 一、Profile 字段说明` |
 | webnovel-init | Step 2 | 用户人物扁平 | `skills/webnovel-init/references/worldbuilding/character-design.md` | 全文 | — |

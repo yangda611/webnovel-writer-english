@@ -15,7 +15,7 @@
 | 题材模板 | 按题材 | `templates/genres/*.md` |
 | Dashboard 前端 | 预打包 | `dashboard/frontend/dist/`（随包发布，无需本地构建） |
 
-### 7 个 Skill
+### 8 个 Skill
 
 | 命令 | 用途 |
 |------|------|
@@ -26,8 +26,9 @@
 | `/webnovel-query` | 查询设定、角色、伏笔、运行时信息（只读） |
 | `/webnovel-learn` | 把有效写法沉淀进项目长期记忆 |
 | `/webnovel-dashboard` | 启动只读可视化面板 |
+| `/webnovel-adapt` | 把已写章节改编成竖屏短剧剧本或漫剧分镜脚本，带格式质检与评分迭代 |
 
-### 4 个 Agent
+### 5 个 Agent
 
 | Agent | 职责 | 被谁调用 |
 |-------|------|---------|
@@ -35,6 +36,7 @@
 | `reviewer` | 逐维度事实审查 | `/webnovel-write` Step 3、`/webnovel-review` |
 | `data-agent` | 从正文提取事实，生成 commit artifacts | `/webnovel-write` Step 5 |
 | `deconstruction-agent` | 参考书拆解，提炼可迁移写法 | `/webnovel-init` Step 1.5 |
+| `adapt-reviewer` | 短剧/漫剧改编稿的忠实度与单集质量评分 | `/webnovel-adapt` Step 5 |
 
 ## 依赖与安装
 
