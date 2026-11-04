@@ -1,0 +1,43 @@
+{
+  "reviewers": 2,
+  "totals": [
+    86,
+    95
+  ],
+  "divergence": 9,
+  "needs_extra_review": true,
+  "scores": {
+    "fidelity": 19,
+    "hook_open": 15,
+    "escalation": 13.5,
+    "payoff": 15,
+    "hook_end": 14,
+    "visual": 6.5,
+    "dialogue": 7.5
+  },
+  "total": 90.5,
+  "agreed_deductions": [
+    {
+      "dim": "visual",
+      "rule": "拍不出来的描述（心理、温度、藏在衣物里的东西）"
+    },
+    {
+      "dim": "visual",
+      "rule": "漫剧：一格多个状态、一格多个身体部位、画面要求画字"
+    },
+    {
+      "dim": "visual",
+      "rule": "漫剧：资产不一致（颜色、锚点、未登记的场景或道具）"
+    },
+    {
+      "dim": "dialogue",
+      "rule": "不同反派用同一个骂法或同一个关键词"
+    },
+    {
+      "dim": "dialogue",
+      "rule": "套话台词，没有角色特征"
+    }
+  ],
+  "blocking_issues": [],
+  "pass": false
+}

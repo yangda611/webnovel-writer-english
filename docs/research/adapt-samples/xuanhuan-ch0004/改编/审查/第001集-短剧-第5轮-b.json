@@ -1,0 +1,26 @@
+{
+  "episode_file": "改编/短剧/第001集-废物的测试石.md",
+  "mode": "short-drama",
+  "scores": {
+    "fidelity": {"score": 16, "max": 20},
+    "hook_open": {"score": 12, "max": 15},
+    "escalation": {"score": 14, "max": 15},
+    "payoff": {"score": 15, "max": 15},
+    "hook_end": {"score": 13, "max": 15},
+    "visual": {"score": 10, "max": 10},
+    "dialogue": {"score": 8, "max": 10}
+  },
+  "deductions": [
+    {"dim": "fidelity", "rule": "未登记的新增事实（数字、经历、关系、原著没有的信息）", "points": 2, "where": "第9行", "quote": "萧炎（16岁"},
+    {"dim": "fidelity", "rule": "未登记的新增事实（数字、经历、关系、原著没有的信息）", "points": 2, "where": "第44行", "quote": "八星打九星，我打过不止一个。"},
+    {"dim": "hook_open", "rule": "首镜有冲突，但主角 5 秒内不露脸或没有反应", "points": 2, "where": "第11-12行", "quote": "一柄白玉折扇抵上萧炎的胸口"},
+    {"dim": "hook_open", "rule": "首集开场 10 秒内使用观众不认识的专有名词或设定黑话", "points": 1, "where": "第12行", "quote": "也想进迦南学院？"},
+    {"dim": "escalation", "rule": "位置变化或动作没有因果镜头", "points": 1, "where": "第65行", "quote": "从看台下几步远处走过"},
+    {"dim": "hook_end", "rule": "钩子前有收束、松气台词", "points": 2, "where": "第69行", "quote": "……过。"},
+    {"dim": "dialogue", "rule": "说明性台词或复述台词", "points": 1, "where": "第33-38行", "quote": "九星复述三遍"},
+    {"dim": "dialogue", "rule": "套话台词，没有角色特征", "points": 1, "where": "第52行", "quote": "你……这是什么身法？！"}
+  ],
+  "total": 88,
+  "blocking_issues": [],
+  "pass": false
+}

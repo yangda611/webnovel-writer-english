@@ -1,0 +1,32 @@
+{
+  "reviewers": 2,
+  "totals": [
+    96,
+    98
+  ],
+  "divergence": 2,
+  "needs_extra_review": false,
+  "scores": {
+    "fidelity": 20,
+    "hook_open": 15,
+    "escalation": 14.5,
+    "payoff": 15,
+    "hook_end": 15,
+    "visual": 8,
+    "dialogue": 9.5
+  },
+  "total": 97.0,
+  "agreed_deductions": [
+    {
+      "dim": "visual",
+      "rule": "漫剧：一格多个状态、一格多个身体部位、画面要求画字"
+    },
+    {
+      "dim": "visual",
+      "rule": "漫剧：资产不一致（颜色、锚点、未登记的场景或道具）"
+    }
+  ],
+  "heavy_deductions": [],
+  "blocking_issues": [],
+  "pass": true
+}

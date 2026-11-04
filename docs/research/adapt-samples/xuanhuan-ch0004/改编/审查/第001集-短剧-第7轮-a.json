@@ -1,0 +1,22 @@
+{
+  "episode_file": "改编/短剧/第001集-废物的测试石.md",
+  "mode": "short-drama",
+  "scores": {
+    "fidelity": {"score": 20, "max": 20},
+    "hook_open": {"score": 15, "max": 15},
+    "escalation": {"score": 14, "max": 15},
+    "payoff": {"score": 15, "max": 15},
+    "hook_end": {"score": 15, "max": 15},
+    "visual": {"score": 10, "max": 10},
+    "dialogue": {"score": 7, "max": 10}
+  },
+  "deductions": [
+    {"dim": "escalation", "rule": "位置变化或动作没有因果镜头", "points": 1, "where": "第43-44行", "quote": "萧炎被谁叫上擂台没有交代"},
+    {"dim": "dialogue", "rule": "说明性台词或复述台词", "points": 1, "where": "第41行", "quote": "实战压住，别露底。"},
+    {"dim": "dialogue", "rule": "说明性台词或复述台词", "points": 1, "where": "第68行", "quote": "过关者，看台前行礼退场。"},
+    {"dim": "dialogue", "rule": "套话台词，没有角色特征", "points": 1, "where": "第31行", "quote": "别浪费我时间。"}
+  ],
+  "total": 96,
+  "blocking_issues": [],
+  "pass": true
+}

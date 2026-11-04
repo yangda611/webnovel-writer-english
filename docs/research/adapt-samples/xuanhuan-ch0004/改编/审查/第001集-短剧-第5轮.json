@@ -1,0 +1,51 @@
+{
+  "reviewers": 2,
+  "totals": [
+    89,
+    88
+  ],
+  "divergence": 1,
+  "needs_extra_review": false,
+  "scores": {
+    "fidelity": 17,
+    "hook_open": 12,
+    "escalation": 13.5,
+    "payoff": 15,
+    "hook_end": 13,
+    "visual": 10,
+    "dialogue": 8
+  },
+  "total": 88.5,
+  "agreed_deductions": [
+    {
+      "dim": "fidelity",
+      "rule": "未登记的新增事实（数字、经历、关系、原著没有的信息）"
+    },
+    {
+      "dim": "hook_open",
+      "rule": "首镜有冲突，但主角 5 秒内不露脸或没有反应"
+    },
+    {
+      "dim": "hook_open",
+      "rule": "首集开场 10 秒内使用观众不认识的专有名词或设定黑话"
+    },
+    {
+      "dim": "escalation",
+      "rule": "位置变化或动作没有因果镜头"
+    },
+    {
+      "dim": "hook_end",
+      "rule": "钩子前有收束、松气台词"
+    },
+    {
+      "dim": "dialogue",
+      "rule": "说明性台词或复述台词"
+    },
+    {
+      "dim": "dialogue",
+      "rule": "套话台词，没有角色特征"
+    }
+  ],
+  "blocking_issues": [],
+  "pass": false
+}

@@ -1,0 +1,23 @@
+{
+  "episode_file": "改编/漫剧/第001集-废物的测试石.md",
+  "mode": "manju",
+  "scores": {
+    "fidelity": {"score": 20, "max": 20},
+    "hook_open": {"score": 15, "max": 15},
+    "escalation": {"score": 14, "max": 15},
+    "payoff": {"score": 15, "max": 15},
+    "hook_end": {"score": 15, "max": 15},
+    "visual": {"score": 7, "max": 10},
+    "dialogue": {"score": 9, "max": 10}
+  },
+  "deductions": [
+    {"dim": "escalation", "rule": "位置变化或动作没有因果镜头", "points": 1, "where": "镜23-24", "quote": "拳已打空又停在胸前一寸"},
+    {"dim": "visual", "rule": "拍不出来的描述（心理、温度、藏在衣物里的东西）", "points": 1, "where": "镜27", "quote": "呼吸平稳"},
+    {"dim": "visual", "rule": "漫剧：一格多个状态、一格多个身体部位、画面要求画字", "points": 1, "where": "镜29", "quote": "撞人、合扇“啪”、指节"},
+    {"dim": "visual", "rule": "漫剧：资产不一致（颜色、锚点、未登记的场景或道具）", "points": 1, "where": "镜5", "quote": "后景药老虚影"},
+    {"dim": "dialogue", "rule": "不同反派用同一个骂法或同一个关键词", "points": 1, "where": "镜1/镜2", "quote": "废物"}
+  ],
+  "total": 95,
+  "blocking_issues": [],
+  "pass": true
+}

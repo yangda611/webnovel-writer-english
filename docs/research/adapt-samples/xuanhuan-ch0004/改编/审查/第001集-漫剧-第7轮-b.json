@@ -1,0 +1,22 @@
+{
+  "episode_file": "改编/漫剧/第001集-废物的测试石.md",
+  "mode": "manju",
+  "scores": {
+    "fidelity": {"score": 20, "max": 20},
+    "hook_open": {"score": 15, "max": 15},
+    "escalation": {"score": 15, "max": 15},
+    "payoff": {"score": 15, "max": 15},
+    "hook_end": {"score": 15, "max": 15},
+    "visual": {"score": 8, "max": 10},
+    "dialogue": {"score": 8, "max": 10}
+  },
+  "deductions": [
+    {"dim": "visual", "rule": "拍不出来的描述（心理、温度、藏在衣物里的东西）", "points": 1, "where": "镜27", "quote": "呼吸平稳"},
+    {"dim": "visual", "rule": "漫剧：一格多个状态、一格多个身体部位、画面要求画字", "points": 1, "where": "镜29", "quote": "撞上跟班，折扇“啪”地合上，指节发白"},
+    {"dim": "dialogue", "rule": "不同反派用同一个骂法或同一个关键词", "points": 1, "where": "镜1/镜2", "quote": "废物"},
+    {"dim": "dialogue", "rule": "套话台词，没有角色特征", "points": 1, "where": "镜8", "quote": "别浪费我时间"}
+  ],
+  "total": 96,
+  "blocking_issues": [],
+  "pass": true
+}

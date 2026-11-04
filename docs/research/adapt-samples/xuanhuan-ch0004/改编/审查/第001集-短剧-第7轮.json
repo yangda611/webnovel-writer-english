@@ -1,0 +1,28 @@
+{
+  "reviewers": 2,
+  "totals": [
+    96,
+    99
+  ],
+  "divergence": 3,
+  "needs_extra_review": false,
+  "scores": {
+    "fidelity": 20,
+    "hook_open": 15,
+    "escalation": 14.5,
+    "payoff": 15,
+    "hook_end": 15,
+    "visual": 10,
+    "dialogue": 8
+  },
+  "total": 97.5,
+  "agreed_deductions": [
+    {
+      "dim": "dialogue",
+      "rule": "套话台词，没有角色特征"
+    }
+  ],
+  "heavy_deductions": [],
+  "blocking_issues": [],
+  "pass": true
+}

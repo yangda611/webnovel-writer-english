@@ -1,0 +1,8 @@
+{
+  "mode": "short-drama",
+  "source_chapters": [1, 1],
+  "episode_target_sec": 120,
+  "style": "蒸汽朋克工业奇幻，冷暖对比光，铜色电流特效，写实厚涂",
+  "intensity": "dramatized",
+  "lint": {"short-drama": {}, "manju": {}}
+}

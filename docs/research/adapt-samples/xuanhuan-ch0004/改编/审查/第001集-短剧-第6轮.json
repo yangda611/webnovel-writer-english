@@ -1,0 +1,36 @@
+{
+  "reviewers": 2,
+  "totals": [
+    97,
+    96
+  ],
+  "divergence": 1,
+  "needs_extra_review": false,
+  "scores": {
+    "fidelity": 20,
+    "hook_open": 15,
+    "escalation": 14,
+    "payoff": 15,
+    "hook_end": 15,
+    "visual": 10,
+    "dialogue": 7.5
+  },
+  "total": 96.5,
+  "agreed_deductions": [
+    {
+      "dim": "escalation",
+      "rule": "位置变化或动作没有因果镜头"
+    },
+    {
+      "dim": "dialogue",
+      "rule": "不同反派用同一个骂法或同一个关键词"
+    },
+    {
+      "dim": "dialogue",
+      "rule": "套话台词，没有角色特征"
+    }
+  ],
+  "heavy_deductions": [],
+  "blocking_issues": [],
+  "pass": true
+}

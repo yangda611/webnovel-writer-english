@@ -1,0 +1,32 @@
+{
+  "reviewers": 2,
+  "totals": [
+    94,
+    94
+  ],
+  "divergence": 0,
+  "needs_extra_review": false,
+  "scores": {
+    "fidelity": 16,
+    "hook_open": 15,
+    "escalation": 15,
+    "payoff": 15,
+    "hook_end": 15,
+    "visual": 10,
+    "dialogue": 8
+  },
+  "total": 94,
+  "agreed_deductions": [
+    {
+      "dim": "fidelity",
+      "rule": "未登记的新增事实（数字、经历、关系、原著没有的信息）"
+    },
+    {
+      "dim": "dialogue",
+      "rule": "说明性台词或复述台词"
+    }
+  ],
+  "heavy_deductions": [],
+  "blocking_issues": [],
+  "pass": true
+}

@@ -1,0 +1,45 @@
+{
+  "reviewers": 2,
+  "totals": [
+    93,
+    92
+  ],
+  "divergence": 1,
+  "needs_extra_review": false,
+  "scores": {
+    "fidelity": 18,
+    "hook_open": 14.5,
+    "escalation": 14,
+    "payoff": 15,
+    "hook_end": 15,
+    "visual": 8.5,
+    "dialogue": 7.5
+  },
+  "total": 92.5,
+  "agreed_deductions": [
+    {
+      "dim": "fidelity",
+      "rule": "未登记的新增事实（数字、经历、关系、原著没有的信息）"
+    },
+    {
+      "dim": "visual",
+      "rule": "漫剧：一格多个状态、一格多个身体部位、画面要求画字"
+    },
+    {
+      "dim": "dialogue",
+      "rule": "说明性台词或复述台词"
+    },
+    {
+      "dim": "dialogue",
+      "rule": "套话台词，没有角色特征"
+    }
+  ],
+  "heavy_deductions": [
+    {
+      "dim": "fidelity",
+      "rule": "未登记的新增事实（数字、经历、关系、原著没有的信息）"
+    }
+  ],
+  "blocking_issues": [],
+  "pass": false
+}

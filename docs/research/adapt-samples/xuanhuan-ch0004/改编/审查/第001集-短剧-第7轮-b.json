@@ -1,0 +1,19 @@
+{
+  "episode_file": "改编/短剧/第001集-废物的测试石.md",
+  "mode": "short-drama",
+  "scores": {
+    "fidelity": {"score": 20, "max": 20},
+    "hook_open": {"score": 15, "max": 15},
+    "escalation": {"score": 15, "max": 15},
+    "payoff": {"score": 15, "max": 15},
+    "hook_end": {"score": 15, "max": 15},
+    "visual": {"score": 10, "max": 10},
+    "dialogue": {"score": 9, "max": 10}
+  },
+  "deductions": [
+    {"dim": "dialogue", "rule": "套话台词，没有角色特征", "points": 1, "where": "第31行", "quote": "别浪费我时间。"}
+  ],
+  "total": 99,
+  "blocking_issues": [],
+  "pass": true
+}

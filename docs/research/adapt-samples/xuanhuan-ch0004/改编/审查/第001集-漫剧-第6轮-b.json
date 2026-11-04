@@ -1,0 +1,24 @@
+{
+  "episode_file": "改编/漫剧/第001集-废物的测试石.md",
+  "mode": "manju",
+  "scores": {
+    "fidelity": {"score": 18, "max": 20},
+    "hook_open": {"score": 15, "max": 15},
+    "escalation": {"score": 13, "max": 15},
+    "payoff": {"score": 15, "max": 15},
+    "hook_end": {"score": 15, "max": 15},
+    "visual": {"score": 9, "max": 10},
+    "dialogue": {"score": 7, "max": 10}
+  },
+  "deductions": [
+    {"dim": "fidelity", "rule": "未登记的新增事实（数字、经历、关系、原著没有的信息）", "points": 2, "where": "镜2", "quote": "萧家都没人了？派他来？"},
+    {"dim": "escalation", "rule": "压力有升级，但\"难度提高\"在画面上不成立", "points": 2, "where": "镜16", "quote": "你，上"},
+    {"dim": "visual", "rule": "漫剧：一格多个状态、一格多个身体部位、画面要求画字", "points": 1, "where": "镜27", "quote": "后脚、胸口、额前碎发"},
+    {"dim": "dialogue", "rule": "说明性台词或复述台词", "points": 1, "where": "镜15", "quote": "记住，三成"},
+    {"dim": "dialogue", "rule": "不同反派用同一个骂法或同一个关键词", "points": 1, "where": "镜18/镜32", "quote": "九星"},
+    {"dim": "dialogue", "rule": "套话台词，没有角色特征", "points": 1, "where": "镜29", "quote": "……侥幸罢了"}
+  ],
+  "total": 92,
+  "blocking_issues": [],
+  "pass": true
+}

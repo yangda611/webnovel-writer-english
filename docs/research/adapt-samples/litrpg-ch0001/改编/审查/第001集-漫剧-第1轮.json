@@ -1,0 +1,61 @@
+{
+  "reviewers": 2,
+  "totals": [
+    85,
+    88
+  ],
+  "divergence": 3,
+  "needs_extra_review": false,
+  "scores": {
+    "fidelity": 16,
+    "hook_open": 12.5,
+    "escalation": 15,
+    "payoff": 15,
+    "hook_end": 13,
+    "visual": 6.5,
+    "dialogue": 8.5
+  },
+  "total": 86.5,
+  "agreed_deductions": [
+    {
+      "dim": "fidelity",
+      "rule": "未登记的新增事实（数字、经历、关系、原著没有的信息）"
+    },
+    {
+      "dim": "hook_open",
+      "rule": "首镜有冲突，但主角 5 秒内不露脸或没有反应"
+    },
+    {
+      "dim": "hook_end",
+      "rule": "钩子的关键关联（谁注意到了什么）没有画面支撑"
+    },
+    {
+      "dim": "visual",
+      "rule": "漫剧：一格多个状态、一格多个身体部位、画面要求画字"
+    },
+    {
+      "dim": "visual",
+      "rule": "漫剧：资产不一致（颜色、锚点、未登记的场景或道具）"
+    },
+    {
+      "dim": "dialogue",
+      "rule": "说明性台词或复述台词"
+    }
+  ],
+  "heavy_deductions": [
+    {
+      "dim": "fidelity",
+      "rule": "未登记的新增事实（数字、经历、关系、原著没有的信息）"
+    },
+    {
+      "dim": "hook_open",
+      "rule": "首镜有冲突，但主角 5 秒内不露脸或没有反应"
+    },
+    {
+      "dim": "hook_end",
+      "rule": "钩子的关键关联（谁注意到了什么）没有画面支撑"
+    }
+  ],
+  "blocking_issues": [],
+  "pass": false
+}

@@ -1,0 +1,21 @@
+{
+  "episode_file": "改编/短剧/第001集-废物的测试石.md",
+  "mode": "short-drama",
+  "scores": {
+    "fidelity": {"score": 20, "max": 20},
+    "hook_open": {"score": 15, "max": 15},
+    "escalation": {"score": 14, "max": 15},
+    "payoff": {"score": 15, "max": 15},
+    "hook_end": {"score": 15, "max": 15},
+    "visual": {"score": 10, "max": 10},
+    "dialogue": {"score": 8, "max": 10}
+  },
+  "deductions": [
+    {"dim": "escalation", "rule": "位置变化或动作没有因果镜头", "points": 1, "where": "第42-46行", "quote": "萧炎没有登台镜头"},
+    {"dim": "dialogue", "rule": "不同反派用同一个骂法或同一个关键词", "points": 1, "where": "第12、29、65行", "quote": "废物"},
+    {"dim": "dialogue", "rule": "套话台词，没有角色特征", "points": 1, "where": "第54行", "quote": "不可能……我这一拳……"}
+  ],
+  "total": 97,
+  "blocking_issues": [],
+  "pass": true
+}
